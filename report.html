@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>B&#225;o c&#225;o &#273;i&#7873;u h&#224;nh t&#297;nh x&#225;c th&#7921;c</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 2-COLUMN REDESIGN */
+    :root {
+      --bg: #ffffff; --surface: #fff5f6; --surface2: #ffecec;
+      --border: rgba(0,0,0,.06); --red: #ff4d6d;
+      --text: #111827; --muted: #6b7280; --radius: 10px;
+      --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    }
+    html { height: 100%; }
+    body {
+      font-family: var(--font); background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+    }
+    /* -- TOPBAR -- */
+    .topbar {
+      background: linear-gradient(135deg,#ff6b81 0%,#ff4d6d 50%,var(--red) 100%);
+      padding: 10px 18px; flex-shrink: 0; position: relative; overflow: hidden;
+    }
+    .topbar::before {
+      content:''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 70% -10%,rgba(255,77,109,.18) 0%,transparent 60%);
+      pointer-events: none;
+    }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .topbar-title { font-size: 15px; font-weight: 800; letter-spacing: -.2px; line-height: 1.2; position: relative; }
+    .topbar-title span { color: #ffd6d6; font-size: 11px; font-weight: 400; display: block; margin-top: 1px; }
+    .topbar-badge {
+      background: rgba(0,0,0,.18); border: 1px solid rgba(255,255,255,.08);
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; white-space: nowrap; color: #ffd6d6;
+    }
+    /* &#9472;&#9472; MAIN 2-COLUMN GRID &#9472;&#9472; */
+    .main-grid {
+      display: grid; grid-template-columns: 270px 1fr;
+      flex: 1; min-height: 0; overflow: hidden;
+    }
+    /* &#9472;&#9472; LEFT COLUMN &#9472;&#9472; */
+    .left-col {
+      padding: 10px; border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 7px; overflow-y: auto;
+    }
+    .scale-banner {
+      background: linear-gradient(90deg, rgba(255,77,109,.06) 0%, transparent 100%);
+      border: 1px solid rgba(255,77,109,.12); border-left: 3px solid var(--red);
+      border-radius: 7px; padding: 7px 10px;
+      font-size: 11px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .scale-banner .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--red); box-shadow: 0 0 5px var(--red); flex-shrink: 0;
+    }
+    .card {
+      border-radius: var(--radius); padding: 14px 16px;
+      position: relative; overflow: hidden;
+      border: 1px solid var(--border); transition: transform .12s ease;
+      background: linear-gradient(135deg, #fffafc 0%, #fff5f6 100%);
+      box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto auto auto;
+      column-gap: 14px;
+      align-items: center;
+    }
+    .card:hover { transform: translateY(-2px); }
+    /* Make KPI cards bold red to stand out */
+    .card.green, .card.orange, .card.red {
+      color: #fff; /* ensure text contrast on dark backgrounds */
+      border-color: rgba(255,77,109,.22);
+      background: linear-gradient(135deg, #ff6b81 0%, #ff4d6d 100%);
+      box-shadow: 0 10px 30px rgba(255,77,109,0.14), inset 0 -6px 18px rgba(0,0,0,0.06);
+    }
+    .card.orange { background: linear-gradient(135deg,#ff7a8f 0%,#ff5a75 100%); }
+    .card.red    { background: linear-gradient(135deg,#ff5a6a 0%,#ff2b4a 100%); }
+    .card::after {
+      content:''; position: absolute; top: -20px; right: -20px;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(255,255,255,.04); pointer-events: none;
+    }
+    .card-icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+      color: #fff; font-size: 22px; font-weight: 700;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12), inset 0 -6px 12px rgba(255,255,255,0.04);
+      grid-column: 1; grid-row: 1 / span 2;
+      position: relative; overflow: visible;
+      transform: translateY(-20px);
+    }
+    .card-icon::after {
+      content: '';
+      position: absolute; right: -6px; top: -22px;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0));
+      box-shadow: inset 0 -2px 6px rgba(255,255,255,0.06);
+      transform: translate(6px, -20px);
+      pointer-events: none;
+    }
+
+
+    .card-num  { font-size: 40px; font-weight: 900; letter-spacing: -.6px; line-height: 1; color: #fff; grid-column: 2; justify-self: end; }
+    .card-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; opacity: .95; color: rgba(255,255,255,0.98); grid-column: 1; grid-row: 2; align-self: start; }
+    .card-note { font-size: 11px; font-weight: 600; text-transform: none; letter-spacing: .2px; margin-top: 6px; color: rgba(255,255,255,0.92); grid-column: 1; grid-row: 3; align-self: start; }
+    .card-subnote { font-size: 11px; font-weight: 600; text-transform: none; letter-spacing: .2px; margin-top: 6px; color: rgba(255,255,255,0.92); grid-column: 2; grid-row: 2; justify-self: end; text-align: right; }
+    .card-rightnote { font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: .2px; margin-top: 6px; color: rgba(255,255,255,0.96); grid-column: 2; grid-row: 3; justify-self: end; text-align: right; }
+    .card-subnote { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.92); margin-top: 1px; }
+    .card-subnote strong { font-weight: 800; }
+    .card-rightnote .line-inline { display:flex; align-items:center; gap:8px; justify-content:flex-end; white-space:nowrap; }
+    .card-rightnote .rightmid { display: inline-block; font-size: 18px; font-weight: 800; margin-left: 6px; line-height: 1; }
+    .card-rightnote .rightbig { display: inline-block; font-size: 36px; font-weight: 900; margin-left: 6px; line-height: 1; }
+    /* No-icon balanced layout for orange & red */
+    .card.orange, .card.red { grid-template-columns: 1fr 1.5fr; align-items: center; column-gap: 10px; }
+    .card.orange .card-label, .card.red .card-label { grid-column: 1; grid-row: 1; align-self: start; padding-top: 2px; }
+    .card.orange .card-note, .card.red .card-note { grid-column: 1; grid-row: 2; align-self: start; }
+    .card.orange .card-rightnote, .card.red .card-rightnote { grid-column: 2; grid-row: 1 / span 2; align-self: center; justify-self: end; margin-top: 0; }
+    .card.orange .card-bar, .card.red .card-bar { grid-column: 1 / -1; grid-row: 3; }
+    .card-bar  { height: 2px; border-radius: 2px; background: rgba(255,255,255,.06); overflow: hidden; margin-top: 8px; grid-column: 1 / -1; grid-row: 4; }
+    .card-bar-fill { height: 100%; border-radius: 2px; background: rgba(255,255,255,.45); }
+    .card-bar-fill { height: 100%; border-radius: 2px; background: rgba(255,255,255,.45); }
+    .warning-bar {
+      background: linear-gradient(90deg, rgba(255,77,109,.06), transparent);
+      border: 1px solid rgba(255,77,109,.12); border-left: 3px solid var(--red);
+      border-radius: 7px; padding: 8px 10px;
+      font-size: 11px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .warning-bar svg { flex-shrink: 0; }
+    /* &#9472;&#9472; RIGHT COLUMN &#9472;&#9472; */
+    .right-col { display: flex; flex-direction: column; overflow: hidden; }
+    .table-header {
+      padding: 9px 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .table-title { font-size: 13px; font-weight: 700; }
+    .table-sub   { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .table-badge { background: var(--surface2); border-radius: 14px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: var(--muted); }
+    .table-wrap  { flex: 1; min-height: 0; overflow-y: auto; background: var(--bg); }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead th {
+      position: sticky; top: 0; z-index: 2; background: var(--surface2);
+      padding: 7px 10px; text-align: left;
+      font-size: 10px; font-weight: 700; letter-spacing: .5px;
+      text-transform: uppercase; color: var(--text); white-space: nowrap;
+    }
+    /* Two-line header helpers for rank and province columns */
+    .rank-top { padding-top: 12px; }
+    .rank-bottom { text-align: center; padding-top: 6px; }
+    .province-top { padding-top: 12px; }
+    .province-bottom { text-align: left; padding-top: 6px; }
+    thead th:first-child { width: 36px; text-align: center; }
+    .th-group {
+      text-align: center !important;
+      padding: 5px 10px !important; font-size: 11px !important; font-weight: 800 !important;
+      letter-spacing: .4px; color: var(--red) !important;
+    }
+    tbody tr { border-top: none; transition: background .12s; }
+    tbody tr:hover { background: rgba(255,77,109,.04); }
+    tbody td { padding: 7px 10px; vertical-align: middle; }
+    /* Tighten vertical spacing for OFFLINE table rows */
+    #t2 table td, #t2 table th { padding: 5px 8px; }
+    tr.sep { border-top: none; }
+    .td-rank { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .td-rank span {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%; background: var(--surface2); font-size: 10px;
+    }
+    .td-rank.gold   span { background: rgba(250,204,21,.2); color: #fbbf24; }
+    .td-rank.silver span { background: rgba(148,163,184,.2); color: #94a3b8; }
+    .td-rank.bronze span { background: rgba(180,120,60,.2);  color: #c8924a; }
+    .td-code { font-weight: 800; font-size: 12px; letter-spacing: .3px; color: var(--red); }
+    .td-num  { font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; padding-right: 12px; }
+    .td-num strong { color: var(--text); font-weight: 600; }
+    /* Vertical separator: last column of ĐẦU KỲ group (col 4) */
+    thead tr:first-child .th-group:first-of-type { border-right: 2px solid rgba(255,90,95,.30) !important; }
+    thead tr:last-child th:nth-child(4) { border-right: 2px solid rgba(255,90,95,.25); text-align: right; padding-right: 12px; }
+    thead tr:last-child th:nth-child(3),
+    thead tr:last-child th:nth-child(5),
+    thead tr:last-child th:nth-child(6) { text-align: right; padding-right: 12px; }
+    tbody td:nth-child(4) { border-right: 2px solid rgba(255,90,95,.15); }
+    /* % completion colored by group */
+    .pct { font-size: 10px; font-weight: 700; margin-left: 2px; }
+    tr[data-group="green"]  .pct { color: #4ade80; }
+    tr[data-group="orange"] .pct { color: #fb923c; }
+    tr[data-group="red"]    .pct { color: #f87171; }
+    /* New warning table */
+    .sect-green td { background: #d1fae5; color: #065f46; font-weight: 700; text-align: center; font-size: 11px; }
+    .sect-red   td { background: #fee2e2; color: #991b1b; font-weight: 700; text-align: center; font-size: 11px; }
+    .pct-green { color: #16a34a; font-weight: 800; }
+    .pct-orange { color: #ea580c; font-weight: 800; }
+    .pct-red    { color: #dc2626; font-weight: 800; }
+    /* Green gradient for OFFLINE table (strongest to lightest) */
+    .pct-green-1 { color: #064e3b; font-weight:900; }
+    .pct-green-2 { color: #0b6b44; font-weight:900; }
+    .pct-green-3 { color: #047857; font-weight:900; }
+    .pct-green-4 { color: #059669; font-weight:900; }
+    .pct-green-5 { color: #16a34a; font-weight:900; }
+    
+    /* Red gradient for alerts (darkest = worst) */
+    .pct-red-1 { color: #5f1414; font-weight: 900; } /* Đậm nhất */
+    .pct-red-2 { color: #7f1d1d; font-weight: 900; }
+    .pct-red-3 { color: #991b1b; font-weight: 900; }
+    .pct-red-4 { color: #9a0212; font-weight: 900; }
+    .pct-red-5 { color: #b91c1c; font-weight: 900; }
+    .pct-red-6 { color: #dc2626; font-weight: 900; }
+    .pct-red-7 { color: #ef4444; font-weight: 900; }
+    .pct-red-8 { color: #ef4444; font-weight: 800; }
+    .pct-red-9 { color: #f87171; font-weight: 800; } /* Nhạt nhất */
+    .pct-red-10{ color: #fecaca; font-weight: 700; }
+    .th-yellow { background: #fef08a !important; color: #713f12 !important; text-transform: none !important; }
+    .th-title-yellow { background: #facc15 !important; color: #713f12 !important; font-size: 13px !important; font-weight: 800 !important; text-align: center !important; letter-spacing: .5px; text-transform: none !important; }
+    .td-r { text-align: right; padding-right: 10px; font-variant-numeric: tabular-nums; font-size: 11px; color: var(--text); }
+    .td-c { text-align: center; font-size: 11px; color: var(--text); }
+    /* Toggle buttons */
+    .toggle-bar { display: flex; gap: 6px; }
+    .toggle-btn { padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--red); font-size: 11px; font-weight: 700; cursor: pointer; transition: all .15s; background: transparent; color: var(--red); }
+    .toggle-btn.active { background: var(--red); color: #fff; }
+    .table-panel { display: none; flex: 1; min-height: 0; overflow-y: auto; }
+    .table-panel.active { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    /* Row highlight for OFFLINE table */
+    .row-pink td { background: #ffe4e6; }
+    .row-green-hl td { background: #dcfce7; }
+    @media (max-width: 768px) {
+      .main-grid { grid-template-columns: 1fr; }
+      body, .main-grid { height: auto; overflow: auto; }
+      .right-col, .table-wrap { overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-title">
+        B&#193;O C&#193;O &#272;I&#7872;U H&#192;NH T&#7880;NH X&#193;C TH&#7920;C
+        <span>Ch&#7889;t CSDL giao GBOC ng&#224;y 18/04/2026 &nbsp;&#183;&nbsp; C&#7853;p nh&#7853;t l&#361;y k&#7871; 24h00 ng&#224;y 21/04/2026</span>
+      </div>
+      <div class="topbar-badge">&#128467; 21/04/2026 &#183; 24:00</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- &#9472;&#9472;&#9472; LEFT: KPI + banners &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+    <aside class="left-col">
+      <div class="scale-banner">
+        <div class="dot"></div>
+        Quy m&#244; S&#7888; LI&#7878;U &#272;I&#7872;U H&#192;NH to&#224;n m&#7841;ng&nbsp;<strong style="color:#fff">20.4tr TB</strong>
+      </div>
+
+      
+      <div class="card orange">
+        <div class="card-label">C&#7847;n x&#225;c th&#7921;c</div>
+        <div class="card-note">(Loại bỏ 4.3tr TB Not 3K3D)</div>
+        <div class="card-rightnote">
+          <div>Đầu kỳ: <span class="rightmid">30.3tr</span></div>
+          <div class="card-subnote">TH L&#361;y k&#7871; t&#7915; 19/4: <strong>-585K</strong></div>
+          <div>Còn phải TH:</div>
+          <div><span class="rightbig">29.7tr</span></div>
+        </div>
+        <div class="card-bar"><div class="card-bar-fill" style="width:43%"></div></div>
+      </div>
+      <div class="card red">
+        <div class="card-label">Giao k&#234;nh OFFLINE</div>
+        <div class="card-note">(CMT 9 s&#7889; + CCCD Y&#7871;u th&#7871;)</div>
+        <div class="card-rightnote">
+          <div>Đầu kỳ: <span class="rightmid">20.4tr</span></div>
+          <div class="card-subnote">TH L&#361;y k&#7871; t&#7915; 19/4: <strong>-435K</strong></div>
+          <div>Còn phải TH:</div>
+          <div><span class="rightbig">19.9tr</span></div>
+        </div>
+        <div class="card-bar"><div class="card-bar-fill" style="width:30%"></div></div>
+      </div>
+
+      <div class="warning-bar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        C&#7842;NH B&#193;O k&#7871;t qu&#7843; th&#7921;c hi&#7879;n l&#361;y k&#7871; theo T&#7881;nh
+      </div>
+    </aside>
+
+    <!-- RIGHT: two switchable tables -->
+    <main class="right-col">
+      <!-- TABLE 1: Tổng -->
+      <div class="table-panel active" id="t1">
+        <div class="table-header">
+          <div>
+            <div class="table-title">C&#7842;NH B&#193;O T&#7880;NH T&#7888;T K&#201;M</div>
+            <div class="table-sub">L&#361;y k&#7871; &#273;&#7871;n 24h00 ng&#224;y 21/04/2026</div>
+          </div>
+          <div class="toggle-bar">
+            <button class="toggle-btn active" id="btn1" data-target="t1" onclick="switchTable('t1')">T&#7893;ng GIAO 30.3tr</button>
+            <button class="toggle-btn" id="btn2" data-target="t2" onclick="switchTable('t2')">K&#234;nh OFFLINE 20.4tr</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" style="text-align:center;vertical-align:middle">TT</th>
+                <th rowspan="2" style="vertical-align:middle">T&#7881;NH</th>
+                <th colspan="8" class="th-title-yellow">&#272;&#193;NH GI&#193; T&#7852;P T&#7892;NG GIAO <span style="color:#f97316">30.3tr</span></th>
+              </tr>
+              <tr>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">&#272;&#7847;u k&#7923; CSDL</th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">KH &#273;&#7871;n ng&#224;y<br/><span style="font-weight:400;font-size:9px">(LK t&#7915; 19/4)</span></th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">L&#361;y k&#7871;<br/><span style="font-weight:400;font-size:9px">(t&#7915; 19/4)</span></th>
+                <th class="th-yellow" style="text-align:center">%TH KH<br/>&#273;&#7871;n ng&#224;y</th>
+                <th class="th-yellow" style="text-align:center">%Online</th>
+                <th class="th-yellow" style="text-align:center">%Offline</th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">C&#7847;n x&#225;c th&#7921;c<br/><span style="font-weight:400;font-size:9px">(C&#242;n l&#7841;i)</span></th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">KH C&#242;n l&#7841;i<br/><span style="font-weight:400;font-size:9px">(T4)</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="sect-green"><td colspan="10">T&#7881;nh Ho&#224;n th&#224;nh K&#7871; ho&#7841;ch &#272;&#7871;n ng&#224;y</td></tr>
+              <tr><td class="td-c">1</td><td class="td-code">HTH</td><td class="td-r">361,645</td><td class="td-r">4,357</td><td class="td-r"><strong>16,037</strong></td><td class="td-c"><span class="pct-green">368.1%</span></td><td class="td-c">13.3%</td><td class="td-c">86.7%</td><td class="td-r">345,608</td><td class="td-r">(62)</td></tr>
+              <tr><td class="td-c">2</td><td class="td-code">BNH</td><td class="td-r">1,285,128</td><td class="td-r">22,208</td><td class="td-r"><strong>32,293</strong></td><td class="td-c"><span class="pct-green">145.4%</span></td><td class="td-c">38.0%</td><td class="td-c">62.0%</td><td class="td-r">1,252,835</td><td class="td-r">49,135</td></tr>
+              <tr><td class="td-c">3</td><td class="td-code">HYN</td><td class="td-r">894,371</td><td class="td-r">18,208</td><td class="td-r"><strong>19,286</strong></td><td class="td-c"><span class="pct-green">105.9%</span></td><td class="td-c">30.1%</td><td class="td-c">69.9%</td><td class="td-r">875,085</td><td class="td-r">47,478</td></tr>
+              <tr class="sect-red"><td colspan="10">10 T&#7880;NH TH&#7920;C HI&#7878;N TH&#7844;P NH&#7844;T</td></tr>
+              <tr><td class="td-c">34</td><td class="td-code">DBN</td><td class="td-r">145,885</td><td class="td-r">5,203</td><td class="td-r"><strong>1,344</strong></td><td class="td-c"><span class="pct-red">25.8%</span></td><td class="td-c">18.9%</td><td class="td-c">81.1%</td><td class="td-r">144,541</td><td class="td-r">17,732</td></tr>
+              <tr><td class="td-c">33</td><td class="td-code">LCU</td><td class="td-r">162,492</td><td class="td-r">6,650</td><td class="td-r"><strong>2,201</strong></td><td class="td-c"><span class="pct-red">33.1%</span></td><td class="td-c">23.9%</td><td class="td-c">76.1%</td><td class="td-r">160,291</td><td class="td-r">22,181</td></tr>
+              <tr><td class="td-c">32</td><td class="td-code">CMU</td><td class="td-r">294,606</td><td class="td-r">11,566</td><td class="td-r"><strong>4,880</strong></td><td class="td-c"><span class="pct-red">42.2%</span></td><td class="td-c">27.7%</td><td class="td-c">72.3%</td><td class="td-r">289,726</td><td class="td-r">37,528</td></tr>
+              <tr><td class="td-c">31</td><td class="td-code">AGG</td><td class="td-r">1,079,493</td><td class="td-r">41,037</td><td class="td-r"><strong>17,315</strong></td><td class="td-c"><span class="pct-red">42.2%</span></td><td class="td-c">20.5%</td><td class="td-c">79.5%</td><td class="td-r">1,062,178</td><td class="td-r">133,154</td></tr>
+              <tr><td class="td-c">30</td><td class="td-code">SLA</td><td class="td-r">472,333</td><td class="td-r">16,232</td><td class="td-r"><strong>7,362</strong></td><td class="td-c"><span class="pct-red">45.4%</span></td><td class="td-c">18.3%</td><td class="td-c">81.7%</td><td class="td-r">464,971</td><td class="td-r">52,157</td></tr>
+              <tr><td class="td-c">29</td><td class="td-code">LDG</td><td class="td-r">1,188,375</td><td class="td-r">41,517</td><td class="td-r"><strong>19,229</strong></td><td class="td-c"><span class="pct-red">46.3%</span></td><td class="td-c">28.5%</td><td class="td-c">71.5%</td><td class="td-r">1,169,146</td><td class="td-r">133,000</td></tr>
+              <tr><td class="td-c">28</td><td class="td-code">DTP</td><td class="td-r">1,007,603</td><td class="td-r">34,777</td><td class="td-r"><strong>16,649</strong></td><td class="td-c"><span class="pct-orange">47.9%</span></td><td class="td-c">25.1%</td><td class="td-c">74.9%</td><td class="td-r">990,954</td><td class="td-r">110,868</td></tr>
+              <tr><td class="td-c">27</td><td class="td-code">CTO</td><td class="td-r">853,784</td><td class="td-r">32,029</td><td class="td-r"><strong>16,052</strong></td><td class="td-c"><span class="pct-orange">50.1%</span></td><td class="td-c">23.6%</td><td class="td-c">76.4%</td><td class="td-r">837,732</td><td class="td-r">101,387</td></tr>
+              <tr><td class="td-c">26</td><td class="td-code">THA</td><td class="td-r">978,536</td><td class="td-r">30,331</td><td class="td-r"><strong>15,658</strong></td><td class="td-c"><span class="pct-orange">51.6%</span></td><td class="td-c">25.6%</td><td class="td-c">74.4%</td><td class="td-r">962,878</td><td class="td-r">95,557</td></tr>
+              <tr><td class="td-c">25</td><td class="td-code">TNH</td><td class="td-r">1,009,008</td><td class="td-r">36,987</td><td class="td-r"><strong>20,073</strong></td><td class="td-c"><span class="pct-orange">54.3%</span></td><td class="td-c">25.5%</td><td class="td-c">74.5%</td><td class="td-r">988,935</td><td class="td-r">115,547</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABLE 2: OFFLINE -->
+      <div class="table-panel" id="t2">
+        <div class="table-header">
+          <div>
+            <div class="table-title">C&#7842;NH B&#193;O K&#202;NH OFFLINE</div>
+            <div class="table-sub">L&#361;y k&#7871; &#273;&#7871;n 24h00 ng&#224;y 21/04/2026</div>
+          </div>
+          <div class="toggle-bar">
+            <button class="toggle-btn" id="btn1" data-target="t1" onclick="switchTable('t1')">T&#7893;ng GIAO 30.3tr</button>
+            <button class="toggle-btn active" id="btn2" data-target="t2" onclick="switchTable('t2')">K&#234;nh OFFLINE 20.4tr</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th rowspan="2" style="text-align:center;vertical-align:middle">TT</th>
+                <th rowspan="2" style="vertical-align:middle">T&#7881;NH</th>
+                <th colspan="9" class="th-title-yellow">&#272;&#193;NH GI&#193; T&#7842;P GIAO K&#202;NH OFFLINE <span style="color:#f97316">20.4tr</span></th>
+              </tr>
+              <tr>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">Giao T&#7893;ng</th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">KH &#273;&#7871;n ng&#224;y<br/><span style="font-weight:400;font-size:9px">(LK t&#7915; 19/4)</span></th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">L&#361;y k&#7871;<br/><span style="font-weight:400;font-size:9px">(t&#7915; 19/4)</span></th>
+                <th class="th-yellow" style="text-align:center">%TH<br/>K&#7871; ho&#7841;ch</th>
+                <th class="th-yellow" style="text-align:center">%Online</th>
+                <th class="th-yellow" style="text-align:center">%Offline</th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">C&#7847;n x&#225;c th&#7921;c<br/><span style="font-weight:400;font-size:9px">(C&#242;n l&#7841;i)</span></th>
+                <th class="th-yellow" style="text-align:right;padding-right:10px">KH C&#242;n l&#7841;i<br/><span style="font-weight:400;font-size:9px">(T4)</span></th>
+                <th class="th-yellow" style="text-align:center">XH T&#7893;ng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="sect-green"><td colspan="11">T&#7881;nh Ho&#224;n th&#224;nh K&#7871; ho&#7841;ch &#272;&#7871;n ng&#224;y</td></tr>
+              <tr><td class="td-c">1</td><td class="td-code">HTH</td><td class="td-r">272,950</td><td class="td-r">3,850</td><td class="td-r"><strong>13,803</strong></td><td class="td-c"><span class="pct-green-1">358.6%</span></td><td class="td-c">10.8%</td><td class="td-c">89.2%</td><td class="td-r">259,147</td><td class="td-r">312</td><td class="td-c">1</td></tr>
+              <tr><td class="td-c">2</td><td class="td-code">QNI</td><td class="td-r">444,216</td><td class="td-r">6,841</td><td class="td-r"><strong>11,826</strong></td><td class="td-c"><span class="pct-green-2">172.9%</span></td><td class="td-c">13.8%</td><td class="td-c">86.2%</td><td class="td-r">432,390</td><td class="td-r">13,257</td><td class="td-c">9</td></tr>
+              <tr><td class="td-c">3</td><td class="td-code">CBG</td><td class="td-r">153,708</td><td class="td-r">2,135</td><td class="td-r"><strong>3,399</strong></td><td class="td-c"><span class="pct-green-3">159.2%</span></td><td class="td-c">19.4%</td><td class="td-c">80.6%</td><td class="td-r">150,309</td><td class="td-r">4,430</td><td class="td-c">13</td></tr>
+              <tr><td class="td-c">4</td><td class="td-code">BNH</td><td class="td-r">855,156</td><td class="td-r">17,915</td><td class="td-r"><strong>24,350</strong></td><td class="td-c"><span class="pct-green-4">135.9%</span></td><td class="td-c">30.7%</td><td class="td-c">69.3%</td><td class="td-r">830,806</td><td class="td-r">41,340</td><td class="td-c">2</td></tr>
+              <tr><td class="td-c">5</td><td class="td-code">TNN</td><td class="td-r">425,275</td><td class="td-r">7,523</td><td class="td-r"><strong>9,978</strong></td><td class="td-c"><span class="pct-green-5">132.6%</span></td><td class="td-c">31.5%</td><td class="td-c">68.5%</td><td class="td-r">415,297</td><td class="td-r">17,605</td><td class="td-c">5</td></tr>
+              <tr class="sect-red"><td colspan="11">10 T&#7880;NH TH&#7920;C HI&#7878;N TH&#7844;P NH&#7844;T</td></tr>
+              <tr><td class="td-c">34</td><td class="td-code">DBN</td><td class="td-r">103,347</td><td class="td-r">3,154</td><td class="td-r"><strong>1,180</strong></td><td class="td-c"><span class="pct-red-1">37.4%</span></td><td class="td-c">15.3%</td><td class="td-c">84.7%</td><td class="td-r">102,167</td><td class="td-r">10,384</td><td class="td-c">34</td></tr>
+              <tr><td class="td-c">33</td><td class="td-code">LCU</td><td class="td-r">126,042</td><td class="td-r">4,224</td><td class="td-r"><strong>1,819</strong></td><td class="td-c"><span class="pct-red-2">43.1%</span></td><td class="td-c">20.8%</td><td class="td-c">79.2%</td><td class="td-r">124,223</td><td class="td-r">13,670</td><td class="td-c">33</td></tr>
+              <tr><td class="td-c">32</td><td class="td-code">HCM</td><td class="td-r">2,150,183</td><td class="td-r">78,147</td><td class="td-r"><strong>37,741</strong></td><td class="td-c"><span class="pct-red-3">48.3%</span></td><td class="td-c">37.8%</td><td class="td-c">62.2%</td><td class="td-r">2,112,442</td><td class="td-r">248,798</td><td class="td-c">20</td></tr>
+              <tr class="row-pink"><td class="td-c">31</td><td class="td-code">HNI</td><td class="td-r">1,663,325</td><td class="td-r">71,575</td><td class="td-r"><strong>36,428</strong></td><td class="td-c"><span class="pct-red-4">50.9%</span></td><td class="td-c">36.8%</td><td class="td-c">63.2%</td><td class="td-r">1,626,897</td><td class="td-r">226,014</td><td class="td-c">8</td></tr>
+              <tr><td class="td-c">30</td><td class="td-code">CMU</td><td class="td-r">216,463</td><td class="td-r">7,170</td><td class="td-r"><strong>3,730</strong></td><td class="td-c"><span class="pct-red-5">52.0%</span></td><td class="td-c">18.3%</td><td class="td-c">81.7%</td><td class="td-r">212,733</td><td class="td-r">22,559</td><td class="td-c">32</td></tr>
+              <tr><td class="td-c">29</td><td class="td-code">AGG</td><td class="td-r">777,063</td><td class="td-r">25,602</td><td class="td-r"><strong>13,681</strong></td><td class="td-c"><span class="pct-red-6">53.4%</span></td><td class="td-c">15.7%</td><td class="td-c">84.3%</td><td class="td-r">763,382</td><td class="td-r">80,194</td><td class="td-c">31</td></tr>
+              <tr><td class="td-c">28</td><td class="td-code">CTO</td><td class="td-r">590,772</td><td class="td-r">20,201</td><td class="td-r"><strong>12,398</strong></td><td class="td-c"><span class="pct-red-7">61.4%</span></td><td class="td-c">15.5%</td><td class="td-c">84.5%</td><td class="td-r">578,374</td><td class="td-r">61,674</td><td class="td-c">27</td></tr>
+              <tr class="row-green-hl"><td class="td-c">27</td><td class="td-code">HPG</td><td class="td-r">610,852</td><td class="td-r">20,131</td><td class="td-r"><strong>13,035</strong></td><td class="td-c"><span class="pct-red-8">64.8%</span></td><td class="td-c">29.0%</td><td class="td-c">71.0%</td><td class="td-r">597,817</td><td class="td-r">60,778</td><td class="td-c">10</td></tr>
+              <tr><td class="td-c">26</td><td class="td-code">TNH</td><td class="td-r">660,311</td><td class="td-r">23,318</td><td class="td-r"><strong>15,110</strong></td><td class="td-c"><span class="pct-red-9">64.8%</span></td><td class="td-c">18.2%</td><td class="td-c">81.8%</td><td class="td-r">645,201</td><td class="td-r">70,389</td><td class="td-c">25</td></tr>
+              <tr><td class="td-c">25</td><td class="td-code">DTP</td><td class="td-r">729,187</td><td class="td-r">20,281</td><td class="td-r"><strong>13,265</strong></td><td class="td-c"><span class="pct-red-10">65.4%</span></td><td class="td-c">19.6%</td><td class="td-c">80.4%</td><td class="td-r">715,922</td><td class="td-r">61,097</td><td class="td-c">28</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</body>
+<script>
+function switchTable(id) {
+  document.querySelectorAll('.table-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.toggle-btn[data-target="' + id + '"]').forEach(b => b.classList.add('active'));
+}
+</script>
+</html>
