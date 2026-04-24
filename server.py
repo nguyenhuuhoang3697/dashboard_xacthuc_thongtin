@@ -2,6 +2,7 @@
 """HTTP server that always sends charset=utf-8 for HTML/CSS/JS."""
 import http.server
 import socketserver
+import sys
 
 PORT = 8000
 
@@ -24,8 +25,21 @@ class UTF8Handler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         print(f"  {self.address_string()} - {format % args}")
 
-with socketserver.TCPServer(("", PORT), UTF8Handler) as httpd:
-    httpd.allow_reuse_address = True
-    print(f"Serving at http://localhost:{PORT}/report.html")
-    print("Press Ctrl+C to stop.")
-    httpd.serve_forever()
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
+
+def start_server(port):
+    with ReusableTCPServer(("", port), UTF8Handler) as httpd:
+        print(f"Serving at http://localhost:{port}/report.html")
+        print("Press Ctrl+C to stop.")
+        httpd.serve_forever()
+
+
+if __name__ == "__main__":
+    try:
+        start_server(PORT)
+    except OSError as err:
+        fallback = PORT + 1
+        print(f"Port {PORT} is unavailable ({err}). Trying {fallback}...", file=sys.stderr)
+        start_server(fallback)

@@ -64,6 +64,10 @@ def build_luy_ke_map(xac_thuc_path: str, from_date: str):
     df_xt["sltb_xac_thuc_final_giao_gboc_offline"] = normalize_numeric(
         df_xt["sltb_xac_thuc_final_giao_gboc_offline"]
     )
+    df_xt["sltb_gboc_60tuoi"] = normalize_numeric(df_xt["sltb_gboc_60tuoi"])
+    df_xt["sltb_gboc_ko_nfc"] = normalize_numeric(df_xt["sltb_gboc_ko_nfc"])
+    df_xt["sltb_gboc_vung_sau_vung_xa"] = normalize_numeric(df_xt["sltb_gboc_vung_sau_vung_xa"])
+    df_xt["sltb_gboc_cmt"] = normalize_numeric(df_xt["sltb_gboc_cmt"])
 
     # Totals (no kenh filter)
     map_303 = (
@@ -90,6 +94,142 @@ def build_luy_ke_map(xac_thuc_path: str, from_date: str):
         "online_myvt_204": map_online_myvt_204,
         "offline_mbccs_303": map_offline_mbccs_303,
         "offline_mbccs_204": map_offline_mbccs_204,
+        "grand_total_303": float(df_xt["sltb_xac_thuc_final_giao_gboc"].sum()),
+        "grand_total_204": float(df_xt["sltb_xac_thuc_final_giao_gboc_offline"].sum()),
+        "cmt_by_province": df_xt.groupby("province_code_home", dropna=False)["sltb_gboc_cmt"].sum().to_dict(),
+        "tuoi60_by_province": df_xt.groupby("province_code_home", dropna=False)["sltb_gboc_60tuoi"].sum().to_dict(),
+        "ko_nfc_by_province": df_xt.groupby("province_code_home", dropna=False)["sltb_gboc_ko_nfc"].sum().to_dict(),
+        "vung_sau_vung_xa_by_province": df_xt.groupby("province_code_home", dropna=False)["sltb_gboc_vung_sau_vung_xa"].sum().to_dict(),
+        "grand_cmt": float(df_xt["sltb_gboc_cmt"].sum()),
+        "grand_60tuoi": float(df_xt["sltb_gboc_60tuoi"].sum()),
+        "grand_ko_nfc": float(df_xt["sltb_gboc_ko_nfc"].sum()),
+        "grand_vung_sau_vung_xa": float(df_xt["sltb_gboc_vung_sau_vung_xa"].sum()),
+    }
+
+
+def build_province_summary(df_total: pd.DataFrame, maps: dict) -> dict:
+    """Tinh KPI theo tung tinh de UI loc tinh cap nhat day du cac the."""
+    df303 = df_total[df_total["Loại"] == "30.3tr"].copy().set_index("Tỉnh")
+    df204 = df_total[df_total["Loại"] == "20.4tr"].copy().set_index("Tỉnh")
+
+    provinces = sorted(set(df303.index.tolist()) | set(df204.index.tolist()))
+    out = {}
+
+    for p in provinces:
+        r303 = df303.loc[p] if p in df303.index else None
+        r204 = df204.loc[p] if p in df204.index else None
+
+        total_dau_ky = float(r303["Tổng giao"]) if r303 is not None and "Tổng giao" in r303 else 0.0
+        total_th_18 = float(r303["TH ngày 18"]) if r303 is not None and "TH ngày 18" in r303 else 0.0
+        total_th_19 = float(maps.get("total_303", {}).get(p, 0.0))
+        total_con = total_dau_ky - total_th_18 - total_th_19
+
+        off_dau_ky = float(r204["Tổng giao"]) if r204 is not None and "Tổng giao" in r204 else 0.0
+        off_th_18 = total_th_18
+        off_th_19 = float(maps.get("total_204", {}).get(p, 0.0))
+        off_con = off_dau_ky - off_th_18 - off_th_19
+
+        cmt_dau_ky = float(r204["Đầu kỳ CMT"]) if r204 is not None and "Đầu kỳ CMT" in r204 else 0.0
+        cmt_th_luy_ke = total_th_18 + float(maps.get("cmt_by_province", {}).get(p, 0.0))
+        cmt_con = cmt_dau_ky - cmt_th_luy_ke
+
+        yeu_dau_ky = float(r204["Đầu kỳ yếu thế"]) if r204 is not None and "Đầu kỳ yếu thế" in r204 else 0.0
+        yeu_th_luy_ke = (
+            float(maps.get("tuoi60_by_province", {}).get(p, 0.0))
+            + float(maps.get("ko_nfc_by_province", {}).get(p, 0.0))
+            + float(maps.get("vung_sau_vung_xa_by_province", {}).get(p, 0.0))
+        )
+        yeu_con = yeu_dau_ky - yeu_th_luy_ke
+
+        out[p] = {
+            "total_card": {
+                "dau_ky": int(round(total_dau_ky)),
+                "th_1_4_18_4": int(round(total_th_18)),
+                "th_luy_ke_tu_19_4": int(round(total_th_19)),
+                "con_phai_th": int(round(total_con)),
+            },
+            "offline_card": {
+                "dau_ky": int(round(off_dau_ky)),
+                "th_1_4_18_4": int(round(off_th_18)),
+                "th_luy_ke_tu_19_4": int(round(off_th_19)),
+                "con_phai_th": int(round(off_con)),
+                "children": {
+                    "cmt9": {
+                        "dau_ky": int(round(cmt_dau_ky)),
+                        "th_luy_ke": int(round(cmt_th_luy_ke)),
+                        "con_phai_th": int(round(cmt_con)),
+                    },
+                    "yeu_the": {
+                        "dau_ky": int(round(yeu_dau_ky)),
+                        "th_luy_ke": int(round(yeu_th_luy_ke)),
+                        "con_phai_th": int(round(yeu_con)),
+                    },
+                },
+            },
+        }
+
+    return out
+
+
+def build_total_card_summary(df_total: pd.DataFrame, maps: dict) -> dict:
+    """Tinh KPI cho the 'Can xac thuc' theo du lieu 30.3tr."""
+    df303 = df_total[df_total["Loại"] == "30.3tr"].copy()
+
+    dau_ky = float(normalize_numeric(df303["Tổng giao"]).sum())
+    th_ngay_18 = float(normalize_numeric(df303["TH ngày 18"]).sum()) if "TH ngày 18" in df303.columns else 0.0
+    th_luy_ke_tu_19_4 = float(maps.get("grand_total_303", 0.0))
+    con_phai_th = dau_ky - th_ngay_18 - th_luy_ke_tu_19_4
+
+    return {
+        "dau_ky": int(round(dau_ky)),
+        "th_1_4_18_4": int(round(th_ngay_18)),
+        "th_luy_ke_tu_19_4": int(round(th_luy_ke_tu_19_4)),
+        "con_phai_th": int(round(con_phai_th)),
+    }
+
+
+def build_offline_card_summary(df_total: pd.DataFrame, maps: dict) -> dict:
+    """Tinh KPI cho the 'Giao kenh OFFLINE' va 2 the con."""
+    df303 = df_total[df_total["Loại"] == "30.3tr"].copy()
+    df204 = df_total[df_total["Loại"] == "20.4tr"].copy()
+
+    th_ngay_18_303 = (
+        float(normalize_numeric(df303["TH ngày 18"]).sum()) if "TH ngày 18" in df303.columns else 0.0
+    )
+
+    dau_ky = float(normalize_numeric(df204["Tổng giao"]).sum())
+    th_luy_ke_tu_19_4 = float(maps.get("grand_total_204", 0.0))
+    con_phai_th = dau_ky - th_ngay_18_303 - th_luy_ke_tu_19_4
+
+    cmt_dau_ky = float(normalize_numeric(df204["Đầu kỳ CMT"]).sum()) if "Đầu kỳ CMT" in df204.columns else 0.0
+    cmt_th_luy_ke = th_ngay_18_303 + float(maps.get("grand_cmt", 0.0))
+    cmt_con_phai_th = cmt_dau_ky - cmt_th_luy_ke
+
+    yeu_the_dau_ky = float(normalize_numeric(df204["Đầu kỳ yếu thế"]).sum()) if "Đầu kỳ yếu thế" in df204.columns else 0.0
+    yeu_the_th_luy_ke = (
+        float(maps.get("grand_60tuoi", 0.0))
+        + float(maps.get("grand_ko_nfc", 0.0))
+        + float(maps.get("grand_vung_sau_vung_xa", 0.0))
+    )
+    yeu_the_con_phai_th = yeu_the_dau_ky - yeu_the_th_luy_ke
+
+    return {
+        "dau_ky": int(round(dau_ky)),
+        "th_1_4_18_4": int(round(th_ngay_18_303)),
+        "th_luy_ke_tu_19_4": int(round(th_luy_ke_tu_19_4)),
+        "con_phai_th": int(round(con_phai_th)),
+        "children": {
+            "cmt9": {
+                "dau_ky": int(round(cmt_dau_ky)),
+                "th_luy_ke": int(round(cmt_th_luy_ke)),
+                "con_phai_th": int(round(cmt_con_phai_th)),
+            },
+            "yeu_the": {
+                "dau_ky": int(round(yeu_the_dau_ky)),
+                "th_luy_ke": int(round(yeu_the_th_luy_ke)),
+                "con_phai_th": int(round(yeu_the_con_phai_th)),
+            },
+        },
     }
 
 
@@ -349,17 +489,28 @@ def main() -> None:
     trend = build_trend_data(args.xac_thuc, "2026-04-15", t2_thap_nhat, all_t2_rows=t2_rows)
     print(f"  [T3] So ngay xu huong: {len(trend['labels'])} | So tinh: {len(trend['provinces'])}")
 
+    total_card = build_total_card_summary(df_total, maps)
+    offline_card = build_offline_card_summary(df_total, maps)
+    province_summary = build_province_summary(df_total, maps)
+
     data = {
         "report_date": report_date_str,
         "from_date": from_date_display,
         "days_from_start": days,
+        "summary": {
+            "total_card": total_card,
+            "offline_card": offline_card,
+            "by_province": province_summary,
+        },
         "t1": {
             "total_provinces": len(t1_rows),
+            "all_rows": t1_rows,
             "dat_kh": t1_dat_kh,
             "thap_nhat": t1_thap_nhat,
         },
         "t2": {
             "total_provinces": len(t2_rows),
+            "all_rows": t2_rows,
             "dat_kh": t2_dat_kh,
             "thap_nhat": t2_thap_nhat,
         },
@@ -370,6 +521,26 @@ def main() -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"Da ghi file: {args.json_output}")
     print(f"Ngay bao cao: {report_date_str} | So ngay tu {from_date_display}: {days}")
+    print(
+        "  [CARD] Dau ky={dau_ky:,} | TH 1/4-18/4={th_1_4_18_4:,} | TH tu 19/4={th_luy_ke_tu_19_4:,} | Con phai TH={con_phai_th:,}".format(
+            **total_card
+        )
+    )
+    print(
+        "  [OFFLINE] Dau ky={dau_ky:,} | TH 1/4-18/4={th_1_4_18_4:,} | TH tu 19/4={th_luy_ke_tu_19_4:,} | Con phai TH={con_phai_th:,}".format(
+            **offline_card
+        )
+    )
+    print(
+        "  [CMT9] Dau ky={dau_ky:,} | TH luy ke={th_luy_ke:,} | Con phai TH={con_phai_th:,}".format(
+            **offline_card["children"]["cmt9"]
+        )
+    )
+    print(
+        "  [YEUTHE] Dau ky={dau_ky:,} | TH luy ke={th_luy_ke:,} | Con phai TH={con_phai_th:,}".format(
+            **offline_card["children"]["yeu_the"]
+        )
+    )
     print(f"  [T1] Tinh dat KH den ngay (>=100%): {len(t1_dat_kh)}")
     print(f"  [T2] Tinh dat KH den ngay (>=100%): {len(t2_dat_kh)}")
 

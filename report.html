@@ -23,12 +23,12 @@
       font-family: var(--font); background: var(--bg); color: var(--text);
       -webkit-font-smoothing: antialiased;
       display: flex; flex-direction: column; height: 100vh; overflow: hidden;
-      zoom: 1.25;
+      zoom: 1.1;
     }
     /* -- TOPBAR -- */
     .topbar {
       background: linear-gradient(135deg,#ff6b81 0%,#ff4d6d 50%,var(--red) 100%);
-      padding: 10px 18px; flex-shrink: 0; position: relative; overflow: hidden;
+      padding: 6px 18px; flex-shrink: 0; position: relative; overflow: hidden;
     }
     .topbar::before {
       content:''; position: absolute; inset: 0;
@@ -36,14 +36,38 @@
       pointer-events: none;
     }
     .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .topbar-title { font-size: 15px; font-weight: 800; letter-spacing: -.2px; line-height: 1.2; position: relative; }
-    .topbar-title span { color: #ffd6d6; font-size: 11px; font-weight: 400; display: block; margin-top: 1px; }
+    .topbar-title { font-size: 15px; font-weight: 800; letter-spacing: -.2px; line-height: 1.3; position: relative; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .topbar-title span { color: #ffd6d6; font-size: 11px; font-weight: 400; display: inline; margin-top: 0; }
     .topbar-badge {
       background: rgba(0,0,0,.18); border: 1px solid rgba(255,255,255,.08);
       padding: 4px 10px; border-radius: 20px;
       font-size: 11px; font-weight: 600; white-space: nowrap; color: #ffd6d6;
     }
-    /* &#9472;&#9472; MAIN 2-COLUMN GRID &#9472;&#9472; */
+    /* ── GLOBAL PROVINCE FILTER BAR ── */
+    .global-filter-bar {
+      background: #fff5f6; border-bottom: 1px solid rgba(255,77,109,.15);
+      padding: 4px 18px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+    .global-filter-bar label { font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+    .global-filter-select {
+      font-family: var(--font); font-size: 11px;
+      border: 1px solid rgba(255,77,109,.3); border-radius: 6px;
+      padding: 3px 8px; background: #fff; color: var(--text);
+      cursor: pointer; min-width: 170px;
+    }
+    .global-filter-badge {
+      background: rgba(255,77,109,.12); color: var(--red);
+      border: 1px solid rgba(255,77,109,.2);
+      font-size: 11px; font-weight: 600;
+      padding: 2px 8px; border-radius: 12px; display: none;
+    }
+    .global-filter-badge.show { display: inline; }
+    .global-filter-reset {
+      font-size: 11px; color: var(--muted); cursor: pointer;
+      background: none; border: none; padding: 2px 4px; display: none;
+    }
+    .global-filter-reset.show { display: inline; }
+    /* ── MAIN 2-COLUMN GRID ── */
     .main-grid {
       display: grid; grid-template-columns: 270px 1fr;
       flex: 1; min-height: 0; overflow: hidden;
@@ -407,12 +431,20 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div class="topbar-title">
-        B&aacute;o c&aacute;o &#273;i&#7873;u h&agrave;nh t&#7881;nh x&aacute;c th&#7921;c nh&eacute;
-        <span id="topbar-sub-line1">Ch&#7889;t CSDL giao GBOC ng&#224;y 18/04/2026</span>
-        <span id="topbar-sub-line2">Lũy k&#7871; 24h ng&#224;y <span id="topbar-report-date">23/04/2026</span></span>
+        BÁO CÁO ĐIỀU HÀNH TỈNH XÁC THỰC
+        <span id="topbar-sub">Ch&#7889;t CSDL giao GBOC ng&#224;y 18/04/2026 &nbsp;&#183;&nbsp; C&#7853;p nh&#7853;t l&#361;y k&#7871; 24h00 ng&#224;y <span id="topbar-report-date">23/04/2026</span></span>
       </div>
       <div class="topbar-badge" id="topbar-badge">&#128467; 23/04/2026 &#183; 24:00</div>
     </div>
+  </div>
+
+  <div class="global-filter-bar" id="global-filter-bar">
+    <label>&#128269; L&#7885;c t&#7881;nh:</label>
+    <select class="global-filter-select" id="global-province-select" onchange="applyGlobalFilter(this.value)">
+      <option value="ALL">— T&#7845;t c&#7843; t&#7881;nh —</option>
+    </select>
+    <span class="global-filter-badge" id="global-filter-badge"></span>
+    <button class="global-filter-reset" id="global-filter-reset" onclick="applyGlobalFilter('ALL')">&#10005; B&#7887; l&#7885;c</button>
   </div>
 
   <div class="main-grid">
@@ -454,9 +486,9 @@
                 <div class="child-label">TB CMT 9 SỐ</div>
               </div>
               <div class="child-right">
-                <div class="child-sub">Đầu kỳ: <strong id="offline-cmt-dau-ky">12.5tr</strong></div>
-                <div class="child-sub">TH Lũy kế: <strong id="offline-cmt-th-luy-ke">-2.12tr</strong></div>
-                <div class="child-value child-value-small">Còn phải TH: <strong id="offline-cmt-con-phai-th">10.4tr</strong></div>
+                <div class="child-sub">Đầu kỳ: <strong id="offline-cmt-dau-ky">12.6tr</strong></div>
+                <div class="child-sub">TH Lũy kế: <strong id="offline-cmt-th-luy-ke">-2.1tr</strong></div>
+                <div class="child-value child-value-small">Còn phải TH: <strong id="offline-cmt-con-phai-th">10.5tr</strong></div>
               </div>
             </div>
             <div class="offline-child-card">
@@ -464,9 +496,9 @@
                 <div class="child-label">TB CCCD YẾU THẾ</div>
               </div>
               <div class="child-right">
-                <div class="child-sub">Đầu kỳ: <strong id="offline-yeu-the-dau-ky">7.9tr</strong></div>
-                <div class="child-sub">TH Lũy kế: <strong id="offline-yeu-the-th-luy-ke">-20k</strong></div>
-                <div class="child-value child-value-small">Còn phải TH: <strong id="offline-yeu-the-con-phai-th">7.7tr</strong></div>
+                <div class="child-sub">Đầu kỳ: <strong id="offline-yeu-the-dau-ky">7.8tr</strong></div>
+                <div class="child-sub">TH Lũy kế: <strong id="offline-yeu-the-th-luy-ke">-174K</strong></div>
+                <div class="child-value child-value-small">Còn phải TH: <strong id="offline-yeu-the-con-phai-th">7.6tr</strong></div>
               </div>
             </div>
         </div>
@@ -588,7 +620,7 @@
         <div class="table-header">
           <div>
             <div class="table-title">XU H&#431;&#7898;NG THEO T&#7880;NH</div>
-            <div class="table-sub" id="t4-sub">Ch&#7885;n t&#7881;nh &#273;&#7875; xem bi&#7875;u &#273;&#7891;</div>
+            <div class="table-sub" id="t4-sub">D&#249;ng b&#7897; l&#7885;c t&#7881;nh ph&#237;a tr&#234;n &#273;&#7875; xem bi&#7875;u &#273;&#7891;</div>
           </div>
           <div class="toggle-bar">
             <button class="toggle-btn" data-target="t1" onclick="switchTable('t1')">T&#7893;ng GIAO 30.3tr</button>
@@ -596,12 +628,6 @@
             <button class="toggle-btn" data-target="t3" onclick="switchTable('t3')">&#128200; Xu h&#432;&#7899;ng</button>
             <button class="toggle-btn active" data-target="t4" onclick="switchTable('t4')">&#128269; T&#7881;nh</button>
           </div>
-        </div>
-        <div class="province-filter-bar">
-          <span style="font-size:12px;font-weight:700;color:var(--muted)">Ch&#7885;n t&#7881;nh:</span>
-          <select class="province-select" id="province-select" onchange="renderT4Province(this.value)">
-            <!-- populated by renderT4() -->
-          </select>
         </div>
         <div class="t4-chart-wrap" id="t4-chart-wrap">
           <!-- populated by renderT4Province() -->
@@ -618,10 +644,109 @@ function switchTable(id) {
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.toggle-btn[data-target="' + id + '"]').forEach(b => b.classList.add('active'));
   if (id === 't3' && !window._chartsInited) { initCharts(); window._chartsInited = true; }
+  // Hide global filter on Xu hướng tab
+  var gfb = document.getElementById('global-filter-bar');
+  if (gfb) gfb.style.display = (id === 't3') ? 'none' : 'flex';
+  if (id === 't4') {
+    renderT4Province(window._globalProvince || 'ALL');
+  }
 }
 
 /* CHART_DATA is now loaded dynamically from data.json via renderTrend() */
 Chart.register(ChartDataLabels);
+
+/* ─── Global province filter ────────────────────────────────── */
+window._globalProvince = 'ALL';
+function applyGlobalFilter(code) {
+  window._globalProvince = code;
+  var badge = document.getElementById('global-filter-badge');
+  var reset = document.getElementById('global-filter-reset');
+  var sel = document.getElementById('global-province-select');
+  if (sel && sel.value !== code) sel.value = code;
+  if (code === 'ALL') {
+    if (badge) { badge.textContent = ''; badge.classList.remove('show'); }
+    if (reset) reset.classList.remove('show');
+    if (window._rawData) {
+      renderT1(window._rawData);
+      renderT2(window._rawData);
+    }
+    updateSummaryByProvince('ALL');
+  } else {
+    if (badge) { badge.textContent = code; badge.classList.add('show'); }
+    if (reset) reset.classList.add('show');
+    if (window._rawData) {
+      renderT1(window._rawData);
+      renderT2(window._rawData);
+    }
+    updateSummaryByProvince(code);
+    renderT4Province(code);
+  }
+}
+
+function findProvinceRow(arr, code) {
+  if (!arr) return null;
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].province === code) return arr[i];
+  }
+  return null;
+}
+
+function updateSummaryByProvince(code) {
+  var data = window._rawData;
+  if (!data) return;
+  if (!code || code === 'ALL') {
+    renderSummary(data);
+    return;
+  }
+
+  var byProvince = data.summary && data.summary.by_province;
+  var pSummary = byProvince && byProvince[code];
+  if (!pSummary) return;
+
+  var totalCard = pSummary.total_card;
+  if (totalCard) {
+    var totalDauKy = document.getElementById('total-card-dau-ky');
+    var totalTh18 = document.getElementById('total-card-th-18');
+    var totalTh19 = document.getElementById('total-card-th-19');
+    var totalCon = document.getElementById('total-card-con-phai-th');
+    if (totalDauKy) totalDauKy.textContent = fmtCompact(totalCard.dau_ky);
+    if (totalTh18) totalTh18.textContent = '-' + fmtCompact(totalCard.th_1_4_18_4);
+    if (totalTh19) totalTh19.textContent = '-' + fmtCompact(totalCard.th_luy_ke_tu_19_4);
+    if (totalCon) totalCon.textContent = fmtCompact(totalCard.con_phai_th);
+  }
+
+  var offlineCard = pSummary.offline_card;
+  if (offlineCard) {
+    var offDauKy = document.getElementById('offline-card-dau-ky');
+    var offTh18 = document.getElementById('offline-card-th-18');
+    var offTh19 = document.getElementById('offline-card-th-19');
+    var offCon = document.getElementById('offline-card-con-phai-th');
+    if (offDauKy) offDauKy.textContent = fmtCompact(offlineCard.dau_ky);
+    if (offTh18) offTh18.textContent = '-' + fmtCompact(offlineCard.th_1_4_18_4);
+    if (offTh19) offTh19.textContent = '-' + fmtCompact(offlineCard.th_luy_ke_tu_19_4);
+    if (offCon) offCon.textContent = fmtCompact(offlineCard.con_phai_th);
+
+    var cmt9 = offlineCard.children && offlineCard.children.cmt9;
+    if (cmt9) {
+      var cmtDauKy = document.getElementById('offline-cmt-dau-ky');
+      var cmtThLuyKe = document.getElementById('offline-cmt-th-luy-ke');
+      var cmtConPhaiTh = document.getElementById('offline-cmt-con-phai-th');
+      if (cmtDauKy) cmtDauKy.textContent = fmtCompact(cmt9.dau_ky);
+      if (cmtThLuyKe) cmtThLuyKe.textContent = '-' + fmtCompact(cmt9.th_luy_ke);
+      if (cmtConPhaiTh) cmtConPhaiTh.textContent = fmtCompact(cmt9.con_phai_th);
+    }
+
+    var yeuThe = offlineCard.children && offlineCard.children.yeu_the;
+    if (yeuThe) {
+      var yeuTheDauKy = document.getElementById('offline-yeu-the-dau-ky');
+      var yeuTheThLuyKe = document.getElementById('offline-yeu-the-th-luy-ke');
+      var yeuTheConPhaiTh = document.getElementById('offline-yeu-the-con-phai-th');
+      if (yeuTheDauKy) yeuTheDauKy.textContent = fmtCompact(yeuThe.dau_ky);
+      if (yeuTheThLuyKe) yeuTheThLuyKe.textContent = '-' + fmtCompact(yeuThe.th_luy_ke);
+      if (yeuTheConPhaiTh) yeuTheConPhaiTh.textContent = fmtCompact(yeuThe.con_phai_th);
+    }
+  }
+}
 
 function makeChart(id, data, labels) {
   new Chart(document.getElementById('chart-' + id), {
@@ -863,7 +988,24 @@ function renderT1(data) {
   const tbody = document.getElementById('t1-tbody');
   if (!tbody) return;
   const t1 = data.t1;
+  const selected = window._globalProvince || 'ALL';
   let html = '';
+
+  if (selected !== 'ALL') {
+    const allRows = t1.all_rows || [];
+    const row = findProvinceRow(allRows, selected);
+    html += '<tr class="sect-red"><td colspan="11">TỈNH ĐANG LỌC</td></tr>';
+    if (row) {
+      html += buildT1Row(row, 'pct-red-5');
+    } else {
+      html += '<tr><td colspan="11" style="text-align:center;padding:10px;color:var(--muted)">Không có dữ liệu cho tỉnh ' + selected + '</td></tr>';
+    }
+    tbody.innerHTML = html;
+    var subSel = document.querySelector('#t1 .table-sub');
+    if (subSel) subSel.textContent = 'Lũy kế đến 24h00 ngày ' + data.report_date;
+    return;
+  }
+
   // Header: TỈNH ĐẠT KH ĐẾN NGÀY
   html += '<tr class="sect-green"><td colspan="11">TỈNH ĐẠT KH ĐẾN NGÀY</td></tr>';
   if (t1.dat_kh.length === 0) {
@@ -889,7 +1031,24 @@ function renderT2(data) {
   const tbody = document.getElementById('t2-tbody');
   if (!tbody) return;
   const t2 = data.t2;
+  const selected = window._globalProvince || 'ALL';
   let html = '';
+
+  if (selected !== 'ALL') {
+    const allRows = t2.all_rows || [];
+    const row = findProvinceRow(allRows, selected);
+    html += '<tr class="sect-red"><td colspan="12">TỈNH ĐANG LỌC</td></tr>';
+    if (row) {
+      html += buildT2Row(row, 'pct-red-5');
+    } else {
+      html += '<tr><td colspan="12" style="text-align:center;padding:10px;color:var(--muted)">Không có dữ liệu cho tỉnh ' + selected + '</td></tr>';
+    }
+    tbody.innerHTML = html;
+    var subSel = document.querySelector('#t2 .table-sub');
+    if (subSel) subSel.textContent = 'Lũy kế đến 24h00 ngày ' + data.report_date;
+    return;
+  }
+
   html += '<tr class="sect-green"><td colspan="12">TỈNH ĐẠT KH ĐẾN NGÀY</td></tr>';
   if (t2.dat_kh.length === 0) {
     html += '<tr><td colspan="12" style="text-align:center;padding:10px;color:var(--muted)">Chưa có tỉnh đạt KH đến ngày</td></tr>';
@@ -925,7 +1084,7 @@ function buildT2Row(r, pctClass) {
 (function loadData() {
   fetch('data.json')
     .then(function(res) { return res.json(); })
-    .then(function(data) { renderSummary(data); renderT1(data); renderT2(data); renderTrend(data); renderT4(data); })
+    .then(function(data) { window._rawData = data; renderSummary(data); renderT1(data); renderT2(data); renderTrend(data); renderT4(data); })
     .catch(function(err) {
       var tbody = document.getElementById('t1-tbody');
       if (tbody) tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:18px;color:#dc2626">Không tải được data.json: ' + err.message + '</td></tr>';
@@ -938,39 +1097,45 @@ function renderT4(data) {
   if (!trend || !trend.all_provinces) return;
   window._t4Data = trend;
 
-  var sel = document.getElementById('province-select');
-  if (!sel) return;
-  sel.innerHTML = '';
-  trend.all_provinces.forEach(function(p) {
-    var opt = document.createElement('option');
-    opt.value = p.code;
-    opt.textContent = p.code + (p.rank_t2 !== '-' ? '  (hạng ' + p.rank_t2 + ')' : '');
-    sel.appendChild(opt);
-  });
-
-  // Render first province by default
-  if (trend.all_provinces.length > 0) {
-    renderT4Province(trend.all_provinces[0].code);
+  // Populate global province filter select
+  var gSel = document.getElementById('global-province-select');
+  if (gSel) {
+    gSel.innerHTML = '<option value="ALL">— Tất cả tỉnh —</option>';
+    trend.all_provinces.forEach(function(p) {
+      var opt = document.createElement('option');
+      opt.value = p.code;
+      opt.textContent = p.code;
+      gSel.appendChild(opt);
+    });
   }
+
+  renderT4Province(window._globalProvince || 'ALL');
 }
 
 var _t4ChartInstance = null;
 function renderT4Province(code) {
   var trend = window._t4Data;
   if (!trend) return;
+  var wrap = document.getElementById('t4-chart-wrap');
+  var sub = document.getElementById('t4-sub');
+  if (!wrap) return;
+
+  if (!code || code === 'ALL') {
+    if (_t4ChartInstance) { _t4ChartInstance.destroy(); _t4ChartInstance = null; }
+    if (sub) sub.textContent = 'Dùng bộ lọc tỉnh phía trên để xem biểu đồ của một tỉnh cụ thể';
+    wrap.innerHTML = '<div class="t4-card"><div class="t4-card-header"><div><div class="t4-card-title">Chưa chọn tỉnh</div><div class="t4-card-sub">Chọn một tỉnh ở bộ lọc chung để xem xu hướng</div></div></div></div>';
+    return;
+  }
+
   var p = trend.all_provinces.find(function(x) { return x.code === code; });
   if (!p) return;
 
   // Update sub text
-  var sub = document.getElementById('t4-sub');
   if (sub) {
     sub.textContent = trend.labels[0] + ' – ' + trend.labels[trend.labels.length - 1]
       + ' · ' + (p.rank_t2 !== '-' ? 'Xếp hạng Offline: ' + p.rank_t2 + '/' + trend.all_provinces.length : 'Không có trong bảng Offline')
       + ' · %TH: ' + (p.pct_th * 100).toFixed(1) + '%';
   }
-
-  var wrap = document.getElementById('t4-chart-wrap');
-  if (!wrap) return;
 
   // Destroy old chart
   if (_t4ChartInstance) { _t4ChartInstance.destroy(); _t4ChartInstance = null; }
