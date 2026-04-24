@@ -1,62 +1,109 @@
-**Dashboard Xác Thực — README**
+# Dashboard Xác Thực
 
-- **Mô tả:** Bộ công cụ tạo dashboard `report.html` từ dữ liệu `f_total.xlsx` (KPI) và file xác thực pipe-delimited (`xac_thuc_...txt`). Script chính là `luong_du_lieu.py` — sinh `f_total_cap_nhat.xlsx` và `data.json` mà `report.html` sử dụng.
+## 1) Mô tả
 
-**Yêu cầu**
-- Python 3.8+ (khuyến nghị 3.11)
-- Thư viện: `pandas`, `openpyxl`
+Dashboard vận hành xác thực theo tỉnh, sinh từ:
+- `f_total.xlsx` (chỉ tiêu/KPI theo tỉnh)
+- file xác thực dạng pipe-delimited `xac_thuc_...txt`
 
-**Chuẩn bị môi trường (Bash)**
+Pipeline chính: `luong_du_lieu.py`.
+
+Đầu ra chính:
+- `f_total_cap_nhat.xlsx`
+- `data.json` (được `report.html` đọc để render giao diện)
+
+## 2) Tính năng hiện tại
+
+- Topbar ngày báo cáo lấy động theo `report_date` trong `data.json`.
+- Filter tỉnh global dùng chung cho dashboard (trừ tab Xu hướng).
+- Khi chọn `Tất cả tỉnh`:
+	- Bảng T1/T2 giữ rule cũ: nhóm tỉnh đạt KH + top 10 thấp nhất.
+- Khi chọn 1 tỉnh bất kỳ:
+	- T1/T2 luôn hiển thị 1 dòng của tỉnh đó.
+	- KPI thẻ trái cập nhật theo tỉnh (bao gồm cả CMT9 và Yếu thế).
+	- Tab `Tỉnh` dùng cùng filter global (đã bỏ dropdown riêng trong panel này).
+- Tab `Xu hướng` giữ logic riêng, không bị tác động bởi filter global.
+
+## 3) Cấu trúc dữ liệu JSON quan trọng
+
+`data.json` gồm các phần chính:
+- `summary.total_card`
+- `summary.offline_card`
+- `summary.by_province` (KPI đầy đủ theo từng tỉnh)
+- `t1.dat_kh`, `t1.thap_nhat`, `t1.all_rows`
+- `t2.dat_kh`, `t2.thap_nhat`, `t2.all_rows`
+- `trend.labels`, `trend.provinces`, `trend.all_provinces`, `trend.national`
+
+## 4) Yêu cầu môi trường
+
+- Python 3.8+
+- Packages: `pandas`, `openpyxl`
+
+## 5) Cài môi trường
+
+### Bash
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-pip install pandas openpyxl
+pip install -r requirements.txt
 ```
 
-**Chuẩn bị môi trường (PowerShell / Windows)**
+### PowerShell (Windows)
+
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1   # hoặc use activate.bat
+\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install pandas openpyxl
+pip install -r requirements.txt
 ```
 
-**Chạy pipeline (1 lệnh)**
-- Dùng script tiện ích: `run_pipeline.sh` (bash)
+## 6) Chạy pipeline
+
+### Cách 1: script bash
+
 ```bash
-./run_pipeline.sh --from-date 2026-04-15 --report-date 2026-04-22
+bash run_pipeline.sh
 ```
-- Hoặc chạy trực tiếp (Windows PowerShell):
+
+### Cách 2: chạy trực tiếp
+
 ```powershell
-.\.venv\Scripts\python.exe luong_du_lieu.py --from-date 2026-04-15 --report-date 2026-04-22
+\.venv\Scripts\python.exe luong_du_lieu.py
 ```
 
-**Phục vụ trang báo cáo (local)**
-- Dùng `server.py` (nếu có):
+Có thể truyền thêm tham số:
+
 ```powershell
-.\.venv\Scripts\python.exe server.py
-# mở http://localhost:8000/report.html
-```
-- Hoặc Python built-in simple server:
-```bash
-python -m http.server 8000 --directory .
+\.venv\Scripts\python.exe luong_du_lieu.py --from-date 2026-04-19 --report-date 2026-04-23
 ```
 
-**Các file chính**
-- `luong_du_lieu.py`: pipeline chính — đọc `f_total.xlsx` và file xác thực, tính toán, xuất `f_total_cap_nhat.xlsx` và `data.json`.
-- `report.html`: dashboard, đọc `data.json` và hiển thị 3 panel (T1, T2, Xu hướng).
-- `server.py`: server tĩnh (UTF-8) phục vụ `report.html`.
-- `data.json`: dữ liệu đầu ra mà `report.html` tiêu thụ.
-- `run_pipeline.sh`: script tiện ích để chạy pipeline nhanh.
+## 7) Chạy local dashboard
 
-**Phần Xu hướng (Trend)**
-- Bắt đầu từ `2026-04-15` (có thể thay `from-date` khi chạy pipeline).
-- Hiển thị 10 tỉnh kém nhất theo kênh Offline (20.4tr).
-- Biểu đồ: Line = `sltb_xac_thuc_final_giao_gboc` (Tổng), Bar = `sltb_xac_thuc_final_giao_gboc_offline` (Offline).
+```powershell
+\.venv\Scripts\python.exe server.py
+```
 
-**Ghi chú vận hành**
-- Nếu có dữ liệu mới: chạy lại `run_pipeline.sh` hoặc `luong_du_lieu.py` để cập nhật `data.json`.
-- Sau cập nhật, reload `report.html` trên trình duyệt để xem đồ thị mới.
+Sau đó mở URL được in ra màn hình:
+- ưu tiên `http://localhost:8000/report.html`
+- nếu cổng 8000 bận, server tự fallback sang `8001`
 
-Nếu muốn, tôi sẽ thêm `run_pipeline.bat` / PowerShell wrapper hoặc `requirements.txt`. Bạn muốn tiếp theo gì?
+## 8) Publish GitHub Pages
+
+- Branch publish: `main`
+- `index.html` redirect về `report.html`
+- URL public:
+	- `https://nguyenhuuhoang3697.github.io/dashboard_xacthuc_thongtin/`
+
+Nếu chưa thấy bản mới:
+1. Chờ 1-2 phút để Pages build xong.
+2. Hard refresh trình duyệt (`Ctrl+F5`).
+
+## 9) File chính
+
+- `luong_du_lieu.py`: pipeline tính toán và xuất JSON.
+- `report.html`: giao diện dashboard.
+- `server.py`: static server UTF-8 cho local.
+- `data.json`: dữ liệu đầu ra để render dashboard.
+- `run_pipeline.sh`: script chạy pipeline nhanh.
