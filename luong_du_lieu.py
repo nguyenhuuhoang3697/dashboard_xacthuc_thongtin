@@ -194,10 +194,11 @@ def build_t2_rows(df204: pd.DataFrame, days: int) -> list[dict]:
     return rows
 
 
-def build_trend_data(xac_thuc_path: str, trend_from_date: str, t2_worst: list[dict]) -> dict:
-    """Doc du lieu xac_thuc tu trend_from_date, nhom theo ngay va tinh,
-    cho 10 tinh kem nhat kenh Offline (t2_thap_nhat)."""
-    provinces = [r["province"] for r in t2_worst]
+def build_trend_data(xac_thuc_path: str, trend_from_date: str, t2_worst: list[dict],
+                     all_t2_rows: list[dict] | None = None) -> dict:
+    """Doc du lieu xac_thuc tu trend_from_date, nhom theo ngay va tinh.
+    Tra ve trend cho 10 tinh kem nhat va tat ca tinh (all_provinces)."""
+    worst_provinces = [r["province"] for r in t2_worst]
 
     df = pd.read_csv(
         xac_thuc_path, sep="|", low_memory=False,
@@ -209,11 +210,18 @@ def build_trend_data(xac_thuc_path: str, trend_from_date: str, t2_worst: list[di
     trend_from_dt = datetime.strptime(trend_from_date, "%Y-%m-%d")
     df = df[df["ngay"] >= trend_from_dt]
     df["province_code_home"] = df["province_code_home"].astype(str).str.strip()
-    df = df[df["province_code_home"].isin(provinces)]
 
     df["sltb_xac_thuc_final_giao_gboc"] = normalize_numeric(df["sltb_xac_thuc_final_giao_gboc"])
     df["sltb_xac_thuc_final_giao_gboc_offline"] = normalize_numeric(
         df["sltb_xac_thuc_final_giao_gboc_offline"]
+    )
+
+    # National totals (all provinces) per day
+    national_grp = (
+        df.groupby("ngay", dropna=False)
+        .agg(national_total=("sltb_xac_thuc_final_giao_gboc", "sum"))
+        .reset_index()
+        .set_index("ngay")
     )
 
     grp = (
@@ -227,7 +235,12 @@ def build_trend_data(xac_thuc_path: str, trend_from_date: str, t2_worst: list[di
 
     all_dates = sorted(grp["ngay"].dropna().unique())
     labels = [f"{d.day}/{d.month}" for d in all_dates]
+    national_series = [
+        int(national_grp.loc[d, "national_total"]) if d in national_grp.index else 0
+        for d in all_dates
+    ]
 
+    # 10 worst provinces
     province_list = []
     for r in t2_worst:
         p = r["province"]
@@ -242,7 +255,29 @@ def build_trend_data(xac_thuc_path: str, trend_from_date: str, t2_worst: list[di
             "offline": offline_series,
         })
 
-    return {"labels": labels, "provinces": province_list}
+    # All provinces for t4 filter view
+    rank_map = {r["province"]: r for r in (all_t2_rows or [])}
+    all_province_codes = sorted(p for p in grp["province_code_home"].dropna().unique() if p.lower() != "nan")
+    all_province_list = []
+    for p in all_province_codes:
+        p_df = grp[grp["province_code_home"] == p].set_index("ngay")
+        total_series = [int(p_df.loc[d, "total"]) if d in p_df.index else 0 for d in all_dates]
+        offline_series = [int(p_df.loc[d, "offline"]) if d in p_df.index else 0 for d in all_dates]
+        r = rank_map.get(p, {})
+        all_province_list.append({
+            "code": p,
+            "rank_t2": r.get("rank", "-"),
+            "pct_th": r.get("pct_th", 0),
+            "total": total_series,
+            "offline": offline_series,
+        })
+
+    return {
+        "labels": labels,
+        "provinces": province_list,
+        "national": national_series,
+        "all_provinces": all_province_list,
+    }
 
 
 def main() -> None:
@@ -310,8 +345,8 @@ def main() -> None:
     t2_dat_kh = [r for r in t2_rows if r["pct_th"] >= 1.0][:10]
     t2_thap_nhat = list(reversed(t2_rows))[:10]
 
-    # T3: Trend — 10 tinh kem nhat kenh Offline tu 15/4
-    trend = build_trend_data(args.xac_thuc, "2026-04-15", t2_thap_nhat)
+    # T3: Trend — 10 tinh kem nhat kenh Offline tu 15/4, kem all_provinces cho t4
+    trend = build_trend_data(args.xac_thuc, "2026-04-15", t2_thap_nhat, all_t2_rows=t2_rows)
     print(f"  [T3] So ngay xu huong: {len(trend['labels'])} | So tinh: {len(trend['provinces'])}")
 
     data = {

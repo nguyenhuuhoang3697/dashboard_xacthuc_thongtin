@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     /* 2-COLUMN REDESIGN */
@@ -209,6 +210,37 @@
       margin-bottom: 2px;
     }
     .chart-card canvas { width: 100% !important; }
+    /* ─── PROVINCE FILTER PANEL (t4) ─── */
+    .province-filter-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .province-select {
+      padding: 5px 10px; border-radius: 8px;
+      border: 1.5px solid var(--red); font-size: 12px; font-weight: 700;
+      color: var(--red); background: #fff; cursor: pointer;
+      outline: none; min-width: 120px;
+    }
+    .province-select:focus { box-shadow: 0 0 0 2px rgba(255,77,109,.2); }
+    .t4-chart-wrap {
+      flex: 1; min-height: 0; overflow-y: auto;
+      padding: 14px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .t4-card {
+      background: #fff; border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 12px 14px 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .t4-card-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .t4-card-title { font-size: 14px; font-weight: 800; color: var(--text); }
+    .t4-card-pct { font-size: 13px; font-weight: 700; color: #dc2626; }
+    .t4-card-sub { font-size: 11px; color: var(--muted); }
     /* ─── RIGHT COLUMN ─── */
     .right-col { display: flex; flex-direction: column; overflow: hidden; }
     .table-header {
@@ -296,7 +328,6 @@
       color: var(--text) !important;
       font-size: 14px !important;
       font-weight: 900 !important;
-    }
       text-align: center !important;
       letter-spacing: .3px;
       text-transform: uppercase !important;
@@ -370,8 +401,26 @@
     }
   </style>
 </head>
-            </thead>
-            <tbody id="t1-tbody"><tr><td colspan="11" style="text-align:center;padding:18px;color:var(--muted)">Đang tải dữ liệu…</td></tr></tbody>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-title">
+        B&#193;O C&#193;O &#272;I&#7872;U H&#192;NH T&#7880;NH X&#193;C TH&#7920;C
+        <span>Ch&#7889;t CSDL giao GBOC ng&#224;y 18/04/2026 &nbsp;&#183;&nbsp; C&#7853;p nh&#7853;t l&#361;y k&#7871; 24h00 ng&#224;y 23/04/2026</span>
+      </div>
+      <div class="topbar-badge">&#128467; 23/04/2026 &#183; 24:00</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- &#9472;&#9472;&#9472; LEFT: KPI + banners &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; -->
+    <aside class="left-col">
+      <div class="scale-banner">
+        <div class="dot"></div>
+        Quy m&#244; S&#7888; LI&#7878;U &#272;I&#7872;U H&#192;NH to&#224;n m&#7841;ng&nbsp;<strong style="color:#fff">20.4tr TB</strong>
+      </div>
 
       <div class="card orange">
         <div class="card-label">C&#7847;n x&#225;c th&#7921;c</div>
@@ -379,9 +428,9 @@
         <div class="card-rightnote">
           <div>Đầu kỳ: <span class="rightmid">30.3tr</span></div>
           <div class="card-subnote">TH từ 1/4-18/4: <strong>-1.5tr</strong></div>
-          <div class="card-subnote">TH L&#361;y k&#7871; t&#7915; 19/4: <strong>-740K</strong></div>
+          <div class="card-subnote">TH L&#361;y k&#7871; t&#7915; 19/4: <strong>-977K</strong></div>
           <div>Còn phải TH:</div>
-          <div><span class="rightbig">28.1tr</span></div>
+          <div><span class="rightbig">27.8tr</span></div>
         </div>
         <div class="card-bar"><div class="card-bar-fill" style="width:43%"></div></div>
       </div>
@@ -392,9 +441,9 @@
         <div class="card-rightnote">
           <div>Đầu kỳ: <span class="rightmid">20.4tr</span></div>
           <div class="card-subnote">TH từ 1/4-18/4: <strong>-1.5tr</strong></div>
-          <div class="card-subnote">TH L&#361;y k&#7871; t&#7915; 19/4: <strong>-590K</strong></div>
+          <div class="card-subnote">TH L&#361;y k&#7871; t&#7915; 19/4: <strong>-765K</strong></div>
           <div>Còn phải TH:</div>
-          <div><span class="rightbig">18.3tr</span></div>
+          <div><span class="rightbig">18.1tr</span></div>
         </div>
         <div class="card-bar"><div class="card-bar-fill" style="width:30%"></div></div>
         <div class="offline-subcards">
@@ -404,8 +453,8 @@
               </div>
               <div class="child-right">
                 <div class="child-sub">Đầu kỳ: <strong>12.5tr</strong></div>
-                <div class="child-sub">TH Lũy kế: <strong>-1.98tr</strong></div>
-                <div class="child-value child-value-small">Còn phải TH: </strong>10.52tr</strong></div>
+                <div class="child-sub">TH Lũy kế: <strong>-2.12tr</strong></div>
+                <div class="child-value child-value-small">Còn phải TH: </strong>10.4tr</strong></div>
               </div>
             </div>
             <div class="offline-child-card">
@@ -414,8 +463,8 @@
               </div>
               <div class="child-right">
                 <div class="child-sub">Đầu kỳ: <strong>7.9tr</strong></div>
-                <div class="child-sub">TH Lũy kế: <strong>-12k</strong></div>
-                <div class="child-value child-value-small">Còn phải TH: 7.78tr</div>
+                <div class="child-sub">TH Lũy kế: <strong>-20k</strong></div>
+                <div class="child-value child-value-small">Còn phải TH: 7.7tr</div>
               </div>
             </div>
         </div>
@@ -429,12 +478,13 @@
         <div class="table-header">
           <div>
             <div class="table-title">C&#7842;NH B&#193;O T&#7880;NH T&#7888;T K&#201;M</div>
-            <div class="table-sub">L&#361;y k&#7871; &#273;&#7871;n 24h00 ng&#224;y 22/04/2026</div>
+            <div class="table-sub">L&#361;y k&#7871; &#273;&#7871;n 24h00 ng&#224;y 23/04/2026</div>
           </div>
           <div class="toggle-bar">
             <button class="toggle-btn active" id="btn1" data-target="t1" onclick="switchTable('t1')">T&#7893;ng GIAO 30.3tr</button>
             <button class="toggle-btn" id="btn2" data-target="t2" onclick="switchTable('t2')">K&#234;nh OFFLINE 20.4tr</button>
             <button class="toggle-btn" data-target="t3" onclick="switchTable('t3')">&#128200; Xu h&#432;&#7899;ng</button>
+            <button class="toggle-btn" data-target="t4" onclick="switchTable('t4')">&#128269; T&#7881;nh</button>
           </div>
         </div>
         <div class="table-wrap">
@@ -462,26 +512,7 @@
                 <th>&#931; C&#7847;n x&#225;c th&#7921;c<span class="sub-note">(c&#242;n l&#7841;i)</span></th>
               </tr>
             </thead>
-<<<<<<< HEAD
-            <tbody>
-              <tr class="sect-green"><td colspan="11">T&#7880;NH &#272;&#7840;T KH &#272;&#7870;N NG&#192;Y</td></tr>
-              <tr><td class="td-c">1</td><td class="td-code">HTH</td><td class="td-r">361,645</td><td class="td-r">5,809</td><td class="td-r"><strong>20,317</strong></td><td class="td-c"><span class="pct-green-1">349.7%</span></td><td class="td-c">12.2%</td><td class="td-c">87.8%</td><td class="td-r">(4,342)</td><td class="td-c">5.6%</td><td class="td-r">312,743</td></tr>
-              <tr><td class="td-c">2</td><td class="td-code">BNH</td><td class="td-r">1,285,128</td><td class="td-r">29,610</td><td class="td-r"><strong>38,917</strong></td><td class="td-c"><span class="pct-green-3">131.4%</span></td><td class="td-c">35.6%</td><td class="td-c">64.4%</td><td class="td-r">42,511</td><td class="td-c">3.0%</td><td class="td-r">1,160,126</td></tr>
-              <tr class="sect-red"><td colspan="11">10 TỈNH THỰC HIỆN THẤP NHẤT</td></tr>
-              <tr><td class="td-c">34</td><td class="td-code">DBN</td><td class="td-r">145,885</td><td class="td-r">6,937</td><td class="td-r"><strong>2,209</strong></td><td class="td-c"><span class="pct-red-1">31.8%</span></td><td class="td-c">14.8%</td><td class="td-c">85.2%</td><td class="td-r">16,867</td><td class="td-c">1.5%</td><td class="td-r">137,477</td></tr>
-              <tr><td class="td-c">33</td><td class="td-code">LCU</td><td class="td-r">162,492</td><td class="td-r">8,866</td><td class="td-r"><strong>3,169</strong></td><td class="td-c"><span class="pct-red-2">35.7%</span></td><td class="td-c">22.3%</td><td class="td-c">77.7%</td><td class="td-r">21,213</td><td class="td-c">2.0%</td><td class="td-r">155,052</td></tr>
-              <tr><td class="td-c">32</td><td class="td-code">AGG</td><td class="td-r">1,079,493</td><td class="td-r">54,716</td><td class="td-r"><strong>22,045</strong></td><td class="td-c"><span class="pct-red-3">40.3%</span></td><td class="td-c">18.9%</td><td class="td-c">81.1%</td><td class="td-r">128,424</td><td class="td-c">2.0%</td><td class="td-r">1,024,179</td></tr>
-              <tr><td class="td-c">31</td><td class="td-code">CMU</td><td class="td-r">294,606</td><td class="td-r">15,421</td><td class="td-r"><strong>7,042</strong></td><td class="td-c"><span class="pct-red-4">45.7%</span></td><td class="td-c">24.6%</td><td class="td-c">75.4%</td><td class="td-r">35,366</td><td class="td-c">2.4%</td><td class="td-r">278,104</td></tr>
-              <tr><td class="td-c">30</td><td class="td-code">DTP</td><td class="td-r">1,007,603</td><td class="td-r">46,370</td><td class="td-r"><strong>21,689</strong></td><td class="td-c"><span class="pct-red-5">46.8%</span></td><td class="td-c">22.4%</td><td class="td-c">77.6%</td><td class="td-r">105,828</td><td class="td-c">2.2%</td><td class="td-r">942,362</td></tr>
-              <tr><td class="td-c">29</td><td class="td-code">LDG</td><td class="td-r">1,188,375</td><td class="td-r">55,356</td><td class="td-r"><strong>26,510</strong></td><td class="td-c"><span class="pct-red-6">47.9%</span></td><td class="td-c">24.5%</td><td class="td-c">75.5%</td><td class="td-r">125,719</td><td class="td-c">2.2%</td><td class="td-r">1,111,882</td></tr>
-              <tr><td class="td-c">28</td><td class="td-code">SLA</td><td class="td-r">472,333</td><td class="td-r">21,643</td><td class="td-r"><strong>10,372</strong></td><td class="td-c"><span class="pct-red-7">47.9%</span></td><td class="td-c">16.2%</td><td class="td-c">83.8%</td><td class="td-r">49,147</td><td class="td-c">2.0%</td><td class="td-r">441,406</td></tr>
-              <tr><td class="td-c">27</td><td class="td-code">THA</td><td class="td-r">978,536</td><td class="td-r">40,442</td><td class="td-r"><strong>20,052</strong></td><td class="td-c"><span class="pct-red-8">49.6%</span></td><td class="td-c">22.6%</td><td class="td-c">77.4%</td><td class="td-r">91,163</td><td class="td-c">2.0%</td><td class="td-r">912,525</td></tr>
-              <tr><td class="td-c">26</td><td class="td-code">TNH</td><td class="td-r">1,009,008</td><td class="td-r">49,316</td><td class="td-r"><strong>24,734</strong></td><td class="td-c"><span class="pct-red-9">50.2%</span></td><td class="td-c">23.1%</td><td class="td-c">76.9%</td><td class="td-r">110,886</td><td class="td-c">2.5%</td><td class="td-r">951,266</td></tr>
-              <tr><td class="td-c">25</td><td class="td-code">HCM</td><td class="td-r">3,578,511</td><td class="td-r">145,245</td><td class="td-r"><strong>73,548</strong></td><td class="td-c"><span class="pct-red-10">50.6%</span></td><td class="td-c">48.7%</td><td class="td-c">51.3%</td><td class="td-r">325,877</td><td class="td-c">2.1%</td><td class="td-r">3,369,822</td></tr>
-            </tbody>
-=======
             <tbody id="t1-tbody"><tr><td colspan="11" style="text-align:center;padding:18px;color:var(--muted)">Đang tải dữ liệu…</td></tr></tbody>
->>>>>>> ef35f0e (Update dashboard: dynamic trend, add pipeline scripts, CI workflow, README, requirements)
           </table>
         </div>
       </div>
@@ -491,12 +522,13 @@
         <div class="table-header">
           <div>
             <div class="table-title">K&#7870;T QU&#7842; T&#7914; D&#7918; LI&#7878;U GIAO K&#202;NH OFFLINE <span style="color:#f97316">20.4tr</span></div>
-            <div class="table-sub">L&#361;y k&#7871; &#273;&#7871;n 24h00 ng&#224;y 22/04/2026</div>
+            <div class="table-sub">L&#361;y k&#7871; &#273;&#7871;n 24h00 ng&#224;y 23/04/2026</div>
           </div>
           <div class="toggle-bar">
             <button class="toggle-btn" id="btn1" data-target="t1" onclick="switchTable('t1')">T&#7893;ng GIAO 30.3tr</button>
             <button class="toggle-btn active" id="btn2" data-target="t2" onclick="switchTable('t2')">K&#234;nh OFFLINE 20.4tr</button>
             <button class="toggle-btn" data-target="t3" onclick="switchTable('t3')">&#128200; Xu h&#432;&#7899;ng</button>
+            <button class="toggle-btn" data-target="t4" onclick="switchTable('t4')">&#128269; T&#7881;nh</button>
           </div>
         </div>
         <div class="table-wrap">
@@ -525,34 +557,7 @@
                 <th>&#931; C&#7847;n x&#225;c th&#7921;c<span class="sub-note">(c&#242;n l&#7841;i)</span></th>
               </tr>
             </thead>
-<<<<<<< HEAD
-            <tbody>
-              <tr class="sect-green"><td colspan="12">T&#7880;NH &#272;&#7840;T K&#7870; HO&#7840;CH &#272;&#7870;N NG&#192;Y</td></tr>
-              <tr><td class="td-c">1</td><td class="td-code">HTH</td><td class="td-r">272,950</td><td class="td-r">5,133</td><td class="td-r"><strong>18,068</strong></td><td class="td-c"><span class="pct-green-1">352.0%</span></td><td class="td-c">10.1%</td><td class="td-c">89.9%</td><td class="td-r">24,632</td><td class="td-c">6.6%</td><td class="td-r">226,293</td><td class="td-c">1</td></tr>
-              <tr><td class="td-c">2</td><td class="td-code">CBG</td><td class="td-r">153,708</td><td class="td-r">2,847</td><td class="td-r"><strong>5,684</strong></td><td class="td-c"><span class="pct-green-1">199.7%</span></td><td class="td-c">16.1%</td><td class="td-c">83.9%</td><td class="td-r">16,230</td><td class="td-c">3.7%</td><td class="td-r">133,937</td><td class="td-c">8</td></tr>
-              <tr><td class="td-c">3</td><td class="td-code">QNI</td><td class="td-r">444,216</td><td class="td-r">9,121</td><td class="td-r"><strong>17,127</strong></td><td class="td-c"><span class="pct-green-2">187.8%</span></td><td class="td-c">12.0%</td><td class="td-c">88.0%</td><td class="td-r">50,840</td><td class="td-c">3.9%</td><td class="td-r">384,203</td><td class="td-c">3</td></tr>
-              <tr><td class="td-c">4</td><td class="td-code">KHA</td><td class="td-r">433,574</td><td class="td-r">10,814</td><td class="td-r"><strong>15,121</strong></td><td class="td-c"><span class="pct-green-2">139.8%</span></td><td class="td-c">20.1%</td><td class="td-c">79.9%</td><td class="td-r">51,130</td><td class="td-c">3.5%</td><td class="td-r">381,940</td><td class="td-c">10</td></tr>
-              <tr><td class="td-c">5</td><td class="td-code">DLK</td><td class="td-r">675,934</td><td class="td-r">15,125</td><td class="td-r"><strong>20,568</strong></td><td class="td-c"><span class="pct-green-3">136.0%</span></td><td class="td-c">18.6%</td><td class="td-c">81.4%</td><td class="td-r">81,315</td><td class="td-c">3.0%</td><td class="td-r">595,076</td><td class="td-c">14</td></tr>
-              <tr><td class="td-c">6</td><td class="td-code">TNN</td><td class="td-r">425,275</td><td class="td-r">10,030</td><td class="td-r"><strong>13,450</strong></td><td class="td-c"><span class="pct-green-3">134.1%</span></td><td class="td-c">28.3%</td><td class="td-c">71.7%</td><td class="td-r">56,959</td><td class="td-c">3.2%</td><td class="td-r">368,998</td><td class="td-c">5</td></tr>
-              <tr><td class="td-c">7</td><td class="td-code">HUE</td><td class="td-r">207,766</td><td class="td-r">5,413</td><td class="td-r"><strong>7,129</strong></td><td class="td-c"><span class="pct-green-4">131.7%</span></td><td class="td-c">19.6%</td><td class="td-c">80.4%</td><td class="td-r">26,463</td><td class="td-c">3.4%</td><td class="td-r">181,931</td><td class="td-c">9</td></tr>
-              <tr><td class="td-c">8</td><td class="td-code">BNH</td><td class="td-r">855,156</td><td class="td-r">23,887</td><td class="td-r"><strong>30,932</strong></td><td class="td-c"><span class="pct-green-4">129.5%</span></td><td class="td-c">29.2%</td><td class="td-c">70.8%</td><td class="td-r">120,843</td><td class="td-c">3.6%</td><td class="td-r">738,138</td><td class="td-c">2</td></tr>
-              <tr><td class="td-c">9</td><td class="td-code">NAN</td><td class="td-r">768,179</td><td class="td-r">18,509</td><td class="td-r"><strong>22,660</strong></td><td class="td-c"><span class="pct-green-5">122.4%</span></td><td class="td-c">19.2%</td><td class="td-c">80.8%</td><td class="td-r">97,171</td><td class="td-c">2.9%</td><td class="td-r">676,587</td><td class="td-c">13</td></tr>
-              <tr><td class="td-c">10</td><td class="td-code">PTO</td><td class="td-r">867,169</td><td class="td-r">23,508</td><td class="td-r"><strong>25,563</strong></td><td class="td-c"><span class="pct-green-5">108.7%</span></td><td class="td-c">26.1%</td><td class="td-c">73.9%</td><td class="td-r">122,665</td><td class="td-c">2.9%</td><td class="td-r">758,023</td><td class="td-c">7</td></tr>
-              <tr class="sect-red"><td colspan="12">10 T&#7880;NH TH&#7920;C HI&#7878;N TH&#7844;P NH&#7844;T</td></tr>
-              <tr><td class="td-c">34</td><td class="td-code">HCM</td><td class="td-r">2,150,183</td><td class="td-r">104,196</td><td class="td-r"><strong>47,005</strong></td><td class="td-c"><span class="pct-red-1">45.1%</span></td><td class="td-c">36.9%</td><td class="td-c">63.1%</td><td class="td-r">374,675</td><td class="td-c">2.2%</td><td class="td-r">1,968,057</td><td class="td-c">25</td></tr>
-              <tr><td class="td-c">33</td><td class="td-code">HNI</td><td class="td-r">1,663,325</td><td class="td-r">95,433</td><td class="td-r"><strong>46,300</strong></td><td class="td-c"><span class="pct-red-2">48.5%</span></td><td class="td-c">35.5%</td><td class="td-c">64.5%</td><td class="td-r">338,193</td><td class="td-c">4.8%</td><td class="td-r">1,494,974</td><td class="td-c">12</td></tr>
-              <tr><td class="td-c">32</td><td class="td-code">DBN</td><td class="td-r">103,347</td><td class="td-r">4,205</td><td class="td-r"><strong>2,044</strong></td><td class="td-c"><span class="pct-red-3">48.6%</span></td><td class="td-c">12.4%</td><td class="td-c">87.6%</td><td class="td-r">15,719</td><td class="td-c">2.0%</td><td class="td-r">95,104</td><td class="td-c">34</td></tr>
-              <tr><td class="td-c">31</td><td class="td-code">LCU</td><td class="td-r">126,042</td><td class="td-r">5,632</td><td class="td-r"><strong>2,780</strong></td><td class="td-c"><span class="pct-red-4">49.4%</span></td><td class="td-c">20.1%</td><td class="td-c">79.9%</td><td class="td-r">16,980</td><td class="td-c">2.2%</td><td class="td-r">118,991</td><td class="td-c">33</td></tr>
-              <tr><td class="td-c">30</td><td class="td-code">AGG</td><td class="td-r">777,063</td><td class="td-r">34,136</td><td class="td-r"><strong>18,392</strong></td><td class="td-c"><span class="pct-red-5">53.9%</span></td><td class="td-c">15.1%</td><td class="td-c">84.9%</td><td class="td-r">108,752</td><td class="td-c">2.4%</td><td class="td-r">725,401</td><td class="td-c">32</td></tr>
-              <tr><td class="td-c">29</td><td class="td-code">HPG</td><td class="td-r">610,852</td><td class="td-r">26,841</td><td class="td-r"><strong>16,461</strong></td><td class="td-c"><span class="pct-red-6">61.3%</span></td><td class="td-c">27.5%</td><td class="td-c">72.5%</td><td class="td-r">106,840</td><td class="td-c">2.7%</td><td class="td-r">544,902</td><td class="td-c">11</td></tr>
-              <tr><td class="td-c">28</td><td class="td-code">CMU</td><td class="td-r">216,463</td><td class="td-r">9,560</td><td class="td-r"><strong>5,869</strong></td><td class="td-c"><span class="pct-red-7">61.4%</span></td><td class="td-c">18.1%</td><td class="td-c">81.9%</td><td class="td-r">29,880</td><td class="td-c">2.7%</td><td class="td-r">201,133</td><td class="td-c">31</td></tr>
-              <tr><td class="td-c">27</td><td class="td-code">TNH</td><td class="td-r">660,311</td><td class="td-r">31,091</td><td class="td-r"><strong>19,728</strong></td><td class="td-c"><span class="pct-red-8">63.5%</span></td><td class="td-c">17.0%</td><td class="td-c">83.0%</td><td class="td-r">98,779</td><td class="td-c">3.0%</td><td class="td-r">607,574</td><td class="td-c">26</td></tr>
-              <tr><td class="td-c">26</td><td class="td-code">THA</td><td class="td-r">662,114</td><td class="td-r">25,092</td><td class="td-r"><strong>16,816</strong></td><td class="td-c"><span class="pct-red-9">67.0%</span></td><td class="td-c">17.9%</td><td class="td-c">82.1%</td><td class="td-r">98,145</td><td class="td-c">2.5%</td><td class="td-r">599,338</td><td class="td-c">27</td></tr>
-              <tr><td class="td-c">25</td><td class="td-code">CTO</td><td class="td-r">590,772</td><td class="td-r">26,935</td><td class="td-r"><strong>18,054</strong></td><td class="td-c"><span class="pct-red-10">67.0%</span></td><td class="td-c">14.2%</td><td class="td-c">85.8%</td><td class="td-r">82,792</td><td class="td-c">3.1%</td><td class="td-r">545,943</td><td class="td-c">24</td></tr>
-            </tbody>
-=======
             <tbody id="t2-tbody"><tr><td colspan="12" style="text-align:center;padding:18px;color:var(--muted)">Đang tải dữ liệu…</td></tr></tbody>
->>>>>>> ef35f0e (Update dashboard: dynamic trend, add pipeline scripts, CI workflow, README, requirements)
           </table>
         </div>
       </div>
@@ -561,51 +566,43 @@
       <div class="table-panel" id="t3">
         <div class="table-header">
           <div>
-            <div class="table-title">XU HƯỚNG 6 TỈNH THỰC HIỆN THẤP NHẤT</div>
-            <div class="table-sub">T&#7915; 15/04 &#8211; 22/04/2026 &nbsp;&#183;&nbsp; &#9646; Bar = Offline &nbsp;&#183;&nbsp; &#9472; Line = T&#7893;ng</div>
+            <div class="table-title">XU H&#431;&#7898;NG 10 T&#7880;NH K&#201;M NH&#7844;T K&#202;NH OFFLINE</div>
+            <div class="table-sub" id="t3-sub">T&#7915; 15/04 &#8211; 23/04/2026 &nbsp;&#183;&nbsp; &#9646; Bar = Offline &nbsp;&#183;&nbsp; &#9472; Line = T&#7893;ng</div>
           </div>
           <div class="toggle-bar">
             <button class="toggle-btn" data-target="t1" onclick="switchTable('t1')">T&#7893;ng GIAO 30.3tr</button>
             <button class="toggle-btn" data-target="t2" onclick="switchTable('t2')">K&#234;nh OFFLINE 20.4tr</button>
             <button class="toggle-btn active" data-target="t3" onclick="switchTable('t3')">&#128200; Xu h&#432;&#7899;ng</button>
+            <button class="toggle-btn" data-target="t4" onclick="switchTable('t4')">&#128269; T&#7881;nh</button>
           </div>
         </div>
-<<<<<<< HEAD
-        <div class="chart-grid">
-          <div class="chart-card">
-            <div class="chart-card-title">DBN <span class="chart-card-pct">31.8%</span></div>
-            <div class="chart-card-sub">&#272;&#244;ng Th&#225;p &mdash; x&#7871;p h&#7841;ng 34/34</div>
-            <canvas id="chart-dbn" height="160"></canvas>
-          </div>
-          <div class="chart-card">
-            <div class="chart-card-title">LCU <span class="chart-card-pct">35.7%</span></div>
-            <div class="chart-card-sub">Long An &mdash; x&#7871;p h&#7841;ng 33/34</div>
-            <canvas id="chart-lcu" height="160"></canvas>
-          </div>
-          <div class="chart-card">
-            <div class="chart-card-title">AGG <span class="chart-card-pct">40.3%</span></div>
-            <div class="chart-card-sub">An Giang &mdash; x&#7871;p h&#7841;ng 32/34</div>
-            <canvas id="chart-agg" height="160"></canvas>
-          </div>
-          <div class="chart-card">
-            <div class="chart-card-title">CMU <span class="chart-card-pct">45.7%</span></div>
-            <div class="chart-card-sub">C&#224; Mau &mdash; x&#7871;p h&#7841;ng 31/34</div>
-            <canvas id="chart-cmu" height="160"></canvas>
-          </div>
-          <div class="chart-card">
-            <div class="chart-card-title">DTP <span class="chart-card-pct">46.8%</span></div>
-            <div class="chart-card-sub">&#272;&#7891;ng Th&#225;p &mdash; x&#7871;p h&#7841;ng 30/34</div>
-            <canvas id="chart-dtp" height="160"></canvas>
-          </div>
-          <div class="chart-card">
-            <div class="chart-card-title">LDG <span class="chart-card-pct">47.9%</span></div>
-            <div class="chart-card-sub">L&#226;m &#272;&#7891;ng &mdash; x&#7871;p h&#7841;ng 29/34</div>
-            <canvas id="chart-ldg" height="160"></canvas>
-          </div>
-=======
         <div class="chart-grid" id="trend-grid">
           <!-- populated by renderTrend() -->
->>>>>>> ef35f0e (Update dashboard: dynamic trend, add pipeline scripts, CI workflow, README, requirements)
+        </div>
+      </div>
+
+      <!-- PANEL 4: Province filter trend -->
+      <div class="table-panel" id="t4">
+        <div class="table-header">
+          <div>
+            <div class="table-title">XU H&#431;&#7898;NG THEO T&#7880;NH</div>
+            <div class="table-sub" id="t4-sub">Ch&#7885;n t&#7881;nh &#273;&#7875; xem bi&#7875;u &#273;&#7891;</div>
+          </div>
+          <div class="toggle-bar">
+            <button class="toggle-btn" data-target="t1" onclick="switchTable('t1')">T&#7893;ng GIAO 30.3tr</button>
+            <button class="toggle-btn" data-target="t2" onclick="switchTable('t2')">K&#234;nh OFFLINE 20.4tr</button>
+            <button class="toggle-btn" data-target="t3" onclick="switchTable('t3')">&#128200; Xu h&#432;&#7899;ng</button>
+            <button class="toggle-btn active" data-target="t4" onclick="switchTable('t4')">&#128269; T&#7881;nh</button>
+          </div>
+        </div>
+        <div class="province-filter-bar">
+          <span style="font-size:12px;font-weight:700;color:var(--muted)">Ch&#7885;n t&#7881;nh:</span>
+          <select class="province-select" id="province-select" onchange="renderT4Province(this.value)">
+            <!-- populated by renderT4() -->
+          </select>
+        </div>
+        <div class="t4-chart-wrap" id="t4-chart-wrap">
+          <!-- populated by renderT4Province() -->
         </div>
       </div>
     </main>
@@ -619,70 +616,10 @@ function switchTable(id) {
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.toggle-btn[data-target="' + id + '"]').forEach(b => b.classList.add('active'));
   if (id === 't3' && !window._chartsInited) { initCharts(); window._chartsInited = true; }
-<<<<<<< HEAD
-}
-
-const LABELS = ['15/4','16/4','17/4','18/4','19/4','20/4','21/4','22/4'];
-const CHART_DATA = {
-  dbn: { total:  [95,  88, 102, 110,  85,  78,  90,  82], offline: [65, 60, 72, 78, 58, 52, 62, 55] },
-  lcu: { total:  [130,125, 148, 155, 110, 120, 108, 105], offline: [90, 85,102,108, 75, 82, 73, 72] },
-  agg: { total:  [850,820, 950, 980, 760, 790, 740, 720], offline:[600,580,670,700,530,550,510,495] },
-  cmu: { total:  [265,255, 295, 310, 235, 248, 228, 220], offline:[185,175,205,218,163,172,158,150] },
-  dtp: { total:  [790,760, 890, 910, 710, 730, 700, 680], offline:[550,530,625,640,495,510,485,468] },
-  ldg: { total:  [950,920,1050,1080, 840, 870, 830, 820], offline:[660,640,730,756,585,608,575,566] }
-};
-
-function makeChart(id, data) {
-  new Chart(document.getElementById('chart-' + id), {
-    data: {
-      labels: LABELS,
-      datasets: [
-        {
-          type: 'bar',
-          label: 'Offline',
-          data: data.offline,
-          backgroundColor: 'rgba(255,77,109,0.55)',
-          borderRadius: 4,
-          order: 2
-        },
-        {
-          type: 'line',
-          label: 'Tổng',
-          data: data.total,
-          borderColor: '#111827',
-          backgroundColor: 'rgba(17,24,39,0.08)',
-          borderWidth: 2,
-          pointRadius: 3,
-          pointBackgroundColor: '#111827',
-          tension: 0.35,
-          fill: false,
-          order: 1
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { font: { size: 10, family: 'Inter' }, boxWidth: 12 } },
-        tooltip: { bodyFont: { size: 10 }, titleFont: { size: 10 } }
-      },
-      scales: {
-        x: { ticks: { font: { size: 9 } }, grid: { display: false } },
-        y: { ticks: { font: { size: 9 } }, grid: { color: 'rgba(0,0,0,.05)' } }
-      }
-    }
-  });
-}
-
-function initCharts() {
-  Object.entries(CHART_DATA).forEach(([id, data]) => makeChart(id, data));
-=======
->>>>>>> ef35f0e (Update dashboard: dynamic trend, add pipeline scripts, CI workflow, README, requirements)
 }
 
 /* CHART_DATA is now loaded dynamically from data.json via renderTrend() */
+Chart.register(ChartDataLabels);
 
 function makeChart(id, data, labels) {
   new Chart(document.getElementById('chart-' + id), {
@@ -695,7 +632,17 @@ function makeChart(id, data, labels) {
           data: data.offline,
           backgroundColor: 'rgba(255,77,109,0.55)',
           borderRadius: 4,
-          order: 2
+          order: 2,
+          yAxisID: 'y',
+          datalabels: {
+            anchor: 'center',
+            align: 'center',
+            color: '#fff',
+            font: { size: 8, family: 'Inter', weight: '700' },
+            formatter: function(v) { return v < 10000 ? (v/1000).toFixed(1)+'k' : Math.round(v/1000)+'k'; },
+            offset: 0,
+            padding: 0
+          }
         },
         {
           type: 'line',
@@ -708,7 +655,17 @@ function makeChart(id, data, labels) {
           pointBackgroundColor: '#111827',
           tension: 0.35,
           fill: false,
-          order: 1
+          order: 1,
+          yAxisID: 'y',
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#111827',
+            font: { size: 8, family: 'Inter', weight: '600' },
+            formatter: function(v) { return v < 10000 ? (v/1000).toFixed(1)+'k' : Math.round(v/1000)+'k'; },
+            offset: 3,
+            padding: 0
+          }
         }
       ]
     },
@@ -716,13 +673,30 @@ function makeChart(id, data, labels) {
       responsive: true,
       maintainAspectRatio: true,
       interaction: { mode: 'index', intersect: false },
+      layout: { padding: { top: 18 } },
       plugins: {
         legend: { labels: { font: { size: 10, family: 'Inter' }, boxWidth: 12 } },
-        tooltip: { bodyFont: { size: 10 }, titleFont: { size: 10 } }
+        tooltip: {
+          bodyFont: { size: 10 }, titleFont: { size: 10 },
+          callbacks: {
+            label: function(ctx) {
+              var v = ctx.parsed.y;
+              return ctx.dataset.label + ': ' + (v < 10000 ? (v/1000).toFixed(1)+'k' : Math.round(v/1000)+'k');
+            }
+          }
+        },
+        datalabels: {}
       },
       scales: {
         x: { ticks: { font: { size: 9 } }, grid: { display: false } },
-        y: { ticks: { font: { size: 9 } }, grid: { color: 'rgba(0,0,0,.05)' } }
+        y: {
+          position: 'left',
+          ticks: {
+            font: { size: 9 },
+            callback: function(v) { return v < 10000 ? (v/1000).toFixed(1)+'k' : Math.round(v/1000)+'k'; }
+          },
+          grid: { color: 'rgba(0,0,0,.05)' }
+        }
       }
     }
   });
@@ -732,7 +706,7 @@ function initCharts() {
   var trend = window._trendData;
   if (!trend) return;
   trend.provinces.forEach(function(p) {
-    makeChart(p.code.toLowerCase(), { total: p.total, offline: p.offline }, trend.labels);
+    makeChart(p.code.toLowerCase(), { total: p.total, offline: p.offline, national: trend.national }, trend.labels);
   });
 }
 
@@ -875,11 +849,104 @@ function buildT2Row(r, pctClass) {
 (function loadData() {
   fetch('data.json')
     .then(function(res) { return res.json(); })
-    .then(function(data) { renderT1(data); renderT2(data); renderTrend(data); })
+    .then(function(data) { renderT1(data); renderT2(data); renderTrend(data); renderT4(data); })
     .catch(function(err) {
       var tbody = document.getElementById('t1-tbody');
       if (tbody) tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:18px;color:#dc2626">Không tải được data.json: ' + err.message + '</td></tr>';
     });
 })();
+
+/* ─── T4: Province filter trend ─────────────────────────────── */
+function renderT4(data) {
+  var trend = data.trend;
+  if (!trend || !trend.all_provinces) return;
+  window._t4Data = trend;
+
+  var sel = document.getElementById('province-select');
+  if (!sel) return;
+  sel.innerHTML = '';
+  trend.all_provinces.forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p.code;
+    opt.textContent = p.code + (p.rank_t2 !== '-' ? '  (hạng ' + p.rank_t2 + ')' : '');
+    sel.appendChild(opt);
+  });
+
+  // Render first province by default
+  if (trend.all_provinces.length > 0) {
+    renderT4Province(trend.all_provinces[0].code);
+  }
+}
+
+var _t4ChartInstance = null;
+function renderT4Province(code) {
+  var trend = window._t4Data;
+  if (!trend) return;
+  var p = trend.all_provinces.find(function(x) { return x.code === code; });
+  if (!p) return;
+
+  // Update sub text
+  var sub = document.getElementById('t4-sub');
+  if (sub) {
+    sub.textContent = trend.labels[0] + ' – ' + trend.labels[trend.labels.length - 1]
+      + ' · ' + (p.rank_t2 !== '-' ? 'Xếp hạng Offline: ' + p.rank_t2 + '/' + trend.all_provinces.length : 'Không có trong bảng Offline')
+      + ' · %TH: ' + (p.pct_th * 100).toFixed(1) + '%';
+  }
+
+  var wrap = document.getElementById('t4-chart-wrap');
+  if (!wrap) return;
+
+  // Destroy old chart
+  if (_t4ChartInstance) { _t4ChartInstance.destroy(); _t4ChartInstance = null; }
+
+  wrap.innerHTML = '<div class="t4-card"><div class="t4-card-header">'
+    + '<div><div class="t4-card-title">' + p.code + '</div>'
+    + '<div class="t4-card-sub">Từ ' + trend.labels[0] + ' đến ' + trend.labels[trend.labels.length - 1] + '</div></div>'
+    + '<div class="t4-card-pct">' + (p.pct_th * 100).toFixed(1) + '%</div>'
+    + '</div><canvas id="chart-t4-main" height="120"></canvas></div>';
+
+  var fmtK = function(v) { return v < 10000 ? (v/1000).toFixed(1)+'k' : Math.round(v/1000)+'k'; };
+
+  _t4ChartInstance = new Chart(document.getElementById('chart-t4-main'), {
+    data: {
+      labels: trend.labels,
+      datasets: [
+        {
+          type: 'bar', label: 'Offline', data: p.offline,
+          backgroundColor: 'rgba(255,77,109,0.55)', borderRadius: 4, order: 2, yAxisID: 'y',
+          datalabels: { anchor: 'center', align: 'center', color: '#fff',
+            font: { size: 10, family: 'Inter', weight: '700' },
+            formatter: fmtK, padding: 0 }
+        },
+        {
+          type: 'line', label: 'Tổng', data: p.total,
+          borderColor: '#111827', backgroundColor: 'rgba(17,24,39,0.08)',
+          borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#111827',
+          tension: 0.35, fill: false, order: 1, yAxisID: 'y',
+          datalabels: { anchor: 'end', align: 'top', color: '#111827',
+            font: { size: 10, family: 'Inter', weight: '600' },
+            formatter: fmtK, offset: 4, padding: 0 }
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      layout: { padding: { top: 22 } },
+      plugins: {
+        legend: { labels: { font: { size: 11, family: 'Inter' }, boxWidth: 14 } },
+        tooltip: {
+          bodyFont: { size: 11 }, titleFont: { size: 11 },
+          callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + fmtK(ctx.parsed.y); } }
+        },
+        datalabels: {}
+      },
+      scales: {
+        x: { ticks: { font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { font: { size: 10 }, callback: fmtK }, grid: { color: 'rgba(0,0,0,.05)' } }
+      }
+    }
+  });
+}
 </script>
 </html>
