@@ -226,6 +226,16 @@
       justify-content: space-between;
       align-items: center;
     }
+    .chart-card-title-left {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .chart-card-growth {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+    }
     .chart-card-pct {
       font-size: 11px;
       font-weight: 700;
@@ -727,6 +737,11 @@ function fmtTotalLabelWithGrowth(ctx) {
   return [fmtK(current), growthText];
 }
 
+function fmtYesterdayGrowth(series) {
+  if (!series || series.length < 2) return '(-)';
+  return fmtGrowthPct(series[series.length - 1], series[series.length - 2]);
+}
+
 function updateSummaryByProvince(code) {
   var data = window._rawData;
   if (!data) return;
@@ -825,7 +840,7 @@ function makeChart(id, data, labels) {
             align: 'top',
             color: '#111827',
             font: { size: 8, family: 'Inter', weight: '600' },
-            formatter: function(v, ctx) { return fmtTotalLabelWithGrowth(ctx); },
+            formatter: function(v) { return fmtK(v); },
             offset: 3,
             padding: 0
           }
@@ -836,7 +851,7 @@ function makeChart(id, data, labels) {
       responsive: true,
       maintainAspectRatio: true,
       interaction: { mode: 'index', intersect: false },
-      layout: { padding: { top: 30 } },
+      layout: { padding: { top: 18 } },
       plugins: {
         legend: { labels: { font: { size: 10, family: 'Inter' }, boxWidth: 12 } },
         tooltip: {
@@ -893,8 +908,10 @@ function renderTrend(data) {
   var total = data.t2 ? data.t2.total_provinces : trend.provinces.length;
   var html = '';
   trend.provinces.forEach(function(p) {
+    var yesterdayGrowth = fmtYesterdayGrowth(p.total);
     html += '<div class="chart-card">' +
-      '<div class="chart-card-title">' + p.code +
+      '<div class="chart-card-title"><span class="chart-card-title-left">' + p.code +
+        ' <span class="chart-card-growth">' + yesterdayGrowth + '</span></span>' +
         ' <span class="chart-card-pct">' + (p.pct_th * 100).toFixed(1) + '%</span></div>' +
       '<div class="chart-card-sub">Xếp hạng ' + p.rank_t2 + '/' + total + ' (Offline)</div>' +
       '<canvas id="chart-' + p.code.toLowerCase() + '" height="160"></canvas>' +
