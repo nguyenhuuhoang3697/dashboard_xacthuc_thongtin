@@ -10,30 +10,33 @@ xac_thuc_file = "xac_thuc_theo_dinh_nghia_v_xac_thuc_luy_ke_20260421.txt"
 
 # Columns to remove from VBI
 cols_to_remove = {
-    'sltb_01', 'sltb_02',
+    'sltb_01', 'sltb_02', 'SLTB_01', 'SLTB_02',
     'sltb_01_trung_cccd_yeu_the', 'sltb_01_trung_cccd_con_lai',
-    'sltb_01_full', 'sltb_02_full',
-    'sltb_01_trung_cccd_yeu_the_full', 'sltb_01_trung_cccd_con_lai_full'
+    'SLTB_01_TRUNG_CCCD_YEU_THE', 'SLTB_01_TRUNG_CCCD_CON_LAI',
+    'sltb_01_full', 'sltb_02_full', 'SLTB_01_FULL', 'SLTB_02_FULL',
+    'sltb_01_trung_cccd_yeu_the_full', 'sltb_01_trung_cccd_con_lai_full',
+    'SLTB_01_TRUNG_CCCD_YEU_THE_FULL', 'SLTB_01_TRUNG_CCCD_CON_LAI_FULL'
 }
 
-# Column mapping from VBI to xac_thuc (now using lowercase to match VBI format)
+# Column mapping from VBI to xac_thuc (support both uppercase and lowercase)
 column_mapping = {
-    'prd_id': None,  # Skip this column if exists
-    'khunggio': 'khunggio',
-    'province_code_home': 'province_code_home',
-    'kenh': 'kenh',
-    'user_name': 'user_name',
-    'cmnd_9so': 'cmnd_9so',
-    'slgiaodich': 'slgiaodich',
-    'sltb': 'sltb',
-    'sltb_loaitru': 'sltb_loaitru',
-    'sltb_xac_thuc': 'sltb_xac_thuc_final',
-    'sltb_xac_thuc_gboc': 'sltb_xac_thuc_final_giao_gboc',
-    'sltb_xacthuc_gboc_offline': 'sltb_xac_thuc_final_giao_gboc_offline',  # Note: xacthuc not xac_thuc
-    'sltb_gboc_60tuoi': 'sltb_gboc_60tuoi',
-    'sltb_gboc_ko_nfc': 'sltb_gboc_ko_nfc',
-    'sltb_gboc_vungsau_vungxa': 'sltb_gboc_vung_sau_vung_xa',
-    'sltb_gboc_cmt': 'sltb_gboc_cmt',
+    'prd_id': None, 'PRD_ID': None,  # Skip this column if exists
+    'khunggio': 'khunggio', 'KHUNGGIO': 'khunggio',
+    'province_code_home': 'province_code_home', 'PROVINCE_CODE_HOME': 'province_code_home',
+    'kenh': 'kenh', 'KENH': 'kenh',
+    'user_name': 'user_name', 'USER_NAME': 'user_name',
+    'cmnd_9so': 'cmnd_9so', 'CMND_9SO': 'cmnd_9so',
+    'slgiaodich': 'slgiaodich', 'SLGIAODICH': 'slgiaodich',
+    'sltb': 'sltb', 'SLTB': 'sltb',
+    'sltb_loaitru': 'sltb_loaitru', 'SLTB_LOAITRU': 'sltb_loaitru',
+    'sltb_xac_thuc': 'sltb_xac_thuc_final', 'SLTB_XAC_THUC': 'sltb_xac_thuc_final',
+    'sltb_xac_thuc_gboc': 'sltb_xac_thuc_final_giao_gboc', 'SLTB_XAC_THUC_GBOC': 'sltb_xac_thuc_final_giao_gboc',
+    'sltb_xacthuc_gboc_offline': 'sltb_xac_thuc_final_giao_gboc_offline',
+    'SLTB_XAC_THUC_GBOC_OFFLINE': 'sltb_xac_thuc_final_giao_gboc_offline',
+    'sltb_gboc_60tuoi': 'sltb_gboc_60tuoi', 'SLTB_GBOC_60TUOI': 'sltb_gboc_60tuoi',
+    'sltb_gboc_ko_nfc': 'sltb_gboc_ko_nfc', 'SLTB_GBOC_KO_NFC': 'sltb_gboc_ko_nfc',
+    'sltb_gboc_vungsau_vungxa': 'sltb_gboc_vung_sau_vung_xa', 'SLTB_GBOC_VUNGSAU_VUNGXA': 'sltb_gboc_vung_sau_vung_xa',
+    'sltb_gboc_cmt': 'sltb_gboc_cmt', 'SLTB_GBOC_CMT': 'sltb_gboc_cmt',
 }
 
 # Read VBI file
@@ -69,11 +72,9 @@ if cols_to_drop:
 # Rename columns to match xac_thuc format (lowercase)
 rename_dict = {}
 for vbi_col in df_vbi.columns:
-    if vbi_col == 'PRD_ID':
-        continue  # Skip PRD_ID
     if vbi_col in column_mapping:
         xac_col = column_mapping[vbi_col]
-        if xac_col:  # Skip None
+        if xac_col:  # Skip None (PRD_ID)
             rename_dict[vbi_col] = xac_col
     else:
         # For unmapped columns, convert to lowercase
